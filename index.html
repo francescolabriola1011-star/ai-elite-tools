@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Elite Advisory — Simulatore del Gestito</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+.hdr{padding:24px 32px 20px;border-bottom:1px solid #2a2a2a;background:#111}
+.eyebrow{font-size:11px;letter-spacing:4px;color:#C9A84C;margin-bottom:6px;text-transform:uppercase}
+.hdr h1{font-size:24px;font-weight:700}
+.hdr p{font-size:13px;color:#888;margin-top:6px;max-width:780px;line-height:1.5}
+.ctrls{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid #222;background:#0F0F0F}
+@media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr 1fr}}
+.sl{padding:13px 16px;border-right:1px solid #1a1a1a}
+.sl label{font-size:9px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
+.sl-val{font-size:14px;font-weight:700;color:#C9A84C;font-family:monospace}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #222}
+@media(max-width:760px){.metrics{grid-template-columns:1fr 1fr}}
+.metric{padding:14px 20px;border-right:1px solid #1a1a1a}
+.metric label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.metric .mv{font-size:18px;font-weight:700;font-family:monospace}
+.metric .mv.gold{color:#C9A84C}.metric .mv.green{color:#6DBF8A}.metric .mv.red{color:#E0A452}
+.metric .ms{font-size:10px;color:#666;margin-top:2px}
+.chart-area{padding:20px 32px 8px}
+.gapbar{margin:14px 0 18px;height:26px;border-radius:4px;background:#161616;position:relative;overflow:hidden;border:1px solid #222}
+.gapbar .now{position:absolute;left:0;top:0;bottom:0;background:#6DBF8A;opacity:.5}
+.gapbar .goal{position:absolute;top:0;bottom:0;width:2px;background:#C9A84C}
+.gapbar .lbl{position:absolute;font-size:10px;color:#aaa;top:6px}
+.legend{display:flex;gap:20px;margin-bottom:12px;flex-wrap:wrap;font-size:12px}
+.leg{display:flex;align-items:center;gap:6px;color:#999}
+.leg-dot{width:14px;height:3px;border-radius:2px}
+.cards{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:14px;padding:8px 32px 28px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+.card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
+.card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
+.ct{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a}
+.row:last-child{border:none}
+.rl{font-size:13px;color:#aaa}.rv{font-size:14px;font-weight:700;font-family:monospace}
+.rv.g{color:#6DBF8A}.rv.gold{color:#C9A84C}
+.punch{font-size:14px;color:#F5F0E8;line-height:1.6;margin-top:4px}
+.punch b{color:#6DBF8A}
+.foot{font-size:11px;color:#555;padding:0 32px 30px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="eyebrow">AI Elite Advisory</div>
+  <h1>Simulatore del Gestito</h1>
+  <p>Dove sei oggi. Dove vuoi arrivare. E quanto ci metti — <b>col sistema</b> vs <b>da solo</b>. La distanza tra te e il tuo obiettivo, nei tuoi numeri.</p>
+</div>
+
+<div class="ctrls">
+  <div class="sl"><label>Gestito oggi</label><input type="range" id="curSl" min="500000" max="20000000" value="3000000" step="500000"><div class="sl-val" id="curV">€3M</div></div>
+  <div class="sl"><label>Obiettivo gestito</label><input type="range" id="goalSl" min="2000000" max="50000000" value="10000000" step="500000"><div class="sl-val" id="goalV">€10M</div></div>
+  <div class="sl"><label>Clienti/mese col sistema</label><input type="range" id="sysSl" min="1" max="8" value="3"><div class="sl-val" id="sysV">3</div></div>
+  <div class="sl"><label>Gestito medio/cliente</label><input type="range" id="aumSl" min="50000" max="500000" value="100000" step="10000"><div class="sl-val" id="aumV">€100k</div></div>
+  <div class="sl"><label>Fattore famiglia (×)</label><input type="range" id="famSl" min="1" max="3" value="1.5" step="0.1"><div class="sl-val" id="famV">1,5×</div></div>
+  <div class="sl"><label>Oggi da solo (clienti/mese)</label><input type="range" id="orgSl" min="0.2" max="3" value="1" step="0.1"><div class="sl-val" id="orgV">1</div></div>
+</div>
+
+<div class="metrics">
+  <div class="metric"><label>Gestito oggi</label><div class="mv green" id="m_cur">—</div></div>
+  <div class="metric"><label>Obiettivo</label><div class="mv gold" id="m_goal">—</div></div>
+  <div class="metric"><label>Il GAP da colmare</label><div class="mv red" id="m_gap">—</div></div>
+  <div class="metric"><label>Tempo: sistema vs solo</label><div class="mv green" id="m_time">—</div><div class="ms" id="m_time_s">—</div></div>
+</div>
+
+<div class="chart-area">
+  <div class="gapbar"><div class="now" id="gb_now"></div><div class="goal" id="gb_goal"></div><span class="lbl" style="left:8px">oggi</span><span class="lbl" id="gb_goal_lbl" style="color:#C9A84C">obiettivo</span></div>
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:#C9A84C"></span>Col sistema</span>
+    <span class="leg"><span class="leg-dot" style="background:#4A90D9;border-top:2px dashed"></span>Da solo (oggi)</span>
+    <span class="leg"><span class="leg-dot" style="background:#6DBF8A"></span>Obiettivo</span>
+  </div>
+  <div style="position:relative;height:220px"><canvas id="ch"></canvas></div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="ct">1 Cliente</div>
+    <div class="row"><span class="rl">Gestito</span><span class="rv gold" id="c_aum">—</span></div>
+    <div class="row"><span class="rl">Commissione/anno (1%)</span><span class="rv g" id="c_comm">—</span></div>
+    <div class="row"><span class="rl">Valore vita (8 anni)</span><span class="rv g" id="c_ltv">—</span></div>
+  </div>
+  <div class="card">
+    <div class="ct">1 Famiglia</div>
+    <div class="row"><span class="rl">Gestito aggregato</span><span class="rv gold" id="f_aum">—</span></div>
+    <div class="row"><span class="rl">Commissione/anno</span><span class="rv g" id="f_comm">—</span></div>
+    <div class="row"><span class="rl">Valore vita</span><span class="rv g" id="f_ltv">—</span></div>
+  </div>
+  <div class="card big">
+    <div class="ct">Il ribaltamento</div>
+    <div class="punch" id="punch">—</div>
+  </div>
+</div>
+
+<div class="foot">
+  Dati illustrativi. Fee gestione 1%/anno, durata media cliente 8 anni, fattore famiglia = quota di nucleo (coniuge/figli) acquisita con ogni cliente. Costo servizio di riferimento: €1.000/mese + €450 ads = €17.400/anno. Una rete moltiplica per il numero di consulenti coordinati.
+</div>
+
+<script>
+let chart=null;
+const FEE=0.01, DUR=8, COSTO=17400;
+function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?0:1)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
+function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
+function yrs(m){if(m>600)return">50 anni";const y=m/12;return y<1?Math.round(m)+" mesi":y.toFixed(1).replace(".",",")+" anni"}
+function calc(){
+  const cur=+curSl.value,goal=+goalSl.value,sys=+sysSl.value,aum=+aumSl.value,fam=+famSl.value,org=+orgSl.value;
+  curV.textContent=k(cur);goalV.textContent=k(goal);sysV.textContent=sys;aumV.textContent=k(aum);famV.textContent=fam.toFixed(1).replace(".",",")+"×";orgV.textContent=org.toFixed(1).replace(".",",");
+  const gap=Math.max(0,goal-cur);
+  const sysMese=sys*aum*fam, orgMese=org*aum;
+  const mSys=sysMese>0?Math.ceil(gap/sysMese):999, mOrg=orgMese>0?Math.ceil(gap/orgMese):999;
+  m_cur.textContent=k(cur);m_goal.textContent=k(goal);m_gap.textContent=k(gap);
+  m_time.textContent=yrs(mSys)+" vs "+yrs(mOrg);
+  m_time_s.textContent="col sistema vs da solo";
+  // gap bar
+  const pct=Math.min(100,cur/goal*100);
+  gb_now.style.width=pct+"%"; gb_goal.style.right="0"; gb_goal_lbl.style.right="8px"; gb_goal.style.left="auto";
+  // cards
+  c_aum.textContent=k(aum);c_comm.textContent=eur(aum*FEE);c_ltv.textContent=k(aum*FEE*DUR);
+  const fA=aum*fam;f_aum.textContent=k(fA);f_comm.textContent=eur(fA*FEE);f_ltv.textContent=k(fA*FEE*DUR);
+  // sistema 12 mesi value
+  const aum12=sys*12*aum*fam, comm12=aum12*FEE, ltv12=comm12*DUR, roi=Math.round(ltv12/COSTO);
+  punch.innerHTML="In 12 mesi il sistema ti porta <b>"+k(aum12)+"</b> di nuovo gestito → <b>"+eur(comm12)+"/anno</b> di commissioni → <b>"+k(ltv12)+"</b> di valore vita.<br><br>Ti costa "+eur(COSTO)+"/anno. <b>ROI ~"+roi+"×</b>. Non è un costo: è gestito che entra. E colmi il tuo gap in <b>"+yrs(mSys)+"</b> invece di "+yrs(mOrg)+".";
+  // chart
+  const N=48,labels=[],dSys=[],dOrg=[],dGoal=[];
+  for(let m=0;m<=N;m++){labels.push("M"+m);dSys.push(Math.min(goal*1.05,cur+sysMese*m));dOrg.push(cur+orgMese*m);dGoal.push(goal);}
+  if(chart)chart.destroy();
+  chart=new Chart(document.getElementById("ch"),{type:"line",
+    data:{labels,datasets:[
+      {label:"Col sistema",data:dSys,borderColor:"#C9A84C",backgroundColor:"rgba(201,168,76,.08)",tension:.3,pointRadius:0,borderWidth:2.5,fill:true},
+      {label:"Da solo",data:dOrg,borderColor:"#4A90D9",borderDash:[6,4],tension:.3,pointRadius:0,borderWidth:2},
+      {label:"Obiettivo",data:dGoal,borderColor:"#6DBF8A",borderDash:[2,3],pointRadius:0,borderWidth:1.5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a1a",borderColor:"#333",borderWidth:1,titleColor:"#aaa",bodyColor:"#F5F0E8",callbacks:{label:c=>c.dataset.label+": "+k(c.parsed.y)}}},
+      scales:{x:{ticks:{color:"#555",font:{size:10},maxTicksLimit:12},grid:{color:"#161616"}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
+  });
+}
+[curSl,goalSl,sysSl,aumSl,famSl,orgSl].forEach(s=>s.addEventListener("input",calc));
+calc();
+</script>
+</body>
+</html>
