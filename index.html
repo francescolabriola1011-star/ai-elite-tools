@@ -18,7 +18,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
 .sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
 .sl-val{font-size:15px;font-weight:700;color:#C9A84C;font-family:monospace}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #222}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #222}
 @media(max-width:760px){.metrics{grid-template-columns:1fr 1fr}}
 .metric{padding:16px 20px;border-right:1px solid #1a1a1a}
 .metric label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
@@ -27,7 +27,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .metric .ms{font-size:10px;color:#666;margin-top:2px}
 .chart-area{padding:22px 32px 8px}
 .chart-area h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:400}
-.cards{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:14px;padding:14px 32px 30px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 32px 30px}
 @media(max-width:760px){.cards{grid-template-columns:1fr}}
 .card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
 .card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
@@ -50,14 +50,13 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 <div class="ctrls">
   <div class="sl"><label>Clienti / mese</label><input type="range" id="cmSl" min="1" max="4" value="2"><div class="sl-val" id="cmV">2</div></div>
   <div class="sl"><label>Gestito medio / cliente</label><input type="range" id="aumSl" min="50000" max="300000" value="100000" step="10000"><div class="sl-val" id="aumV">€100k</div></div>
-  <div class="sl"><label>Fattore famiglia (×)</label><input type="range" id="famSl" min="1" max="3" value="1.5" step="0.1"><div class="sl-val" id="famV">1,5×</div></div>
+  <div class="sl"><label>Referenze per cliente</label><input type="range" id="famSl" min="0" max="3" value="1" step="1"><div class="sl-val" id="famV">1 referenza</div></div>
   <div class="sl"><label>Fee gestione / anno</label><input type="range" id="feeSl" min="0.5" max="1.5" value="1" step="0.1"><div class="sl-val" id="feeV">1,0%</div></div>
   <div class="sl"><label>Durata media cliente</label><input type="range" id="durSl" min="3" max="15" value="8"><div class="sl-val" id="durV">8 anni</div></div>
 </div>
 
 <div class="metrics">
   <div class="metric"><label>Clienti acquisiti / anno</label><div class="mv gold" id="m_cli">—</div></div>
-  <div class="metric"><label>Gestito acquisito / anno</label><div class="mv gold" id="m_aum">—</div></div>
   <div class="metric"><label>Commissioni quest'anno</label><div class="mv green" id="m_y1">—</div></div>
   <div class="metric"><label>Valore sulla durata</label><div class="mv green" id="m_val">—</div><div class="ms" id="m_val_s">—</div></div>
 </div>
@@ -70,25 +69,20 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 <div class="cards">
   <div class="card">
     <div class="ct">1 Cliente</div>
-    <div class="row"><span class="rl">Gestito (con famiglia)</span><span class="rv gold" id="c_aum">—</span></div>
+    <div class="row"><span class="rl">Gestito (con referenze)</span><span class="rv gold" id="c_aum">—</span></div>
     <div class="row"><span class="rl">Commissione / anno</span><span class="rv g" id="c_comm">—</span></div>
     <div class="row"><span class="rl">Valore vita</span><span class="rv g" id="c_ltv">—</span></div>
   </div>
   <div class="card">
     <div class="ct">Il lavoro di quest'anno</div>
     <div class="row"><span class="rl">Clienti acquisiti</span><span class="rv gold" id="w_cli">—</span></div>
-    <div class="row"><span class="rl">Gestito acquisito</span><span class="rv gold" id="w_aum">—</span></div>
     <div class="row"><span class="rl">Commissioni quest'anno</span><span class="rv g" id="w_y1">—</span></div>
     <div class="row"><span class="rl">Valore su tutta la durata</span><span class="rv g" id="w_val">—</span></div>
-  </div>
-  <div class="card big">
-    <div class="ct">Il ribaltamento</div>
-    <div class="punch" id="punch">—</div>
   </div>
 </div>
 
 <div class="foot">
-  Dati illustrativi. Mostra il valore dei <b>clienti acquisiti in un anno</b> di lavoro insieme: quanto rendono il primo anno e quanto valgono in totale se restano la durata media indicata. "Fattore famiglia" = quota di nucleo (coniuge/figli) acquisita con ogni cliente. Costo servizio di riferimento: €1.000/mese + €450 ads = €17.400/anno.
+  Dati illustrativi. Mostra il valore dei <b>clienti acquisiti in un anno</b> di lavoro insieme: quanto rendono il primo anno e quanto valgono in totale se restano la durata media indicata. "Referenze per cliente" = quante persone (familiari/conoscenti) ogni cliente porta in media: ognuna vale un cliente in più con lo stesso gestito medio (0 = nessuna referenza).
 </div>
 
 <script>
@@ -97,23 +91,21 @@ const COSTO=17400;
 function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
 function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
 function calc(){
-  const cm=+cmSl.value,aum=+aumSl.value,fam=+famSl.value,fee=+feeSl.value/100,dur=+durSl.value;
-  cmV.textContent=cm;aumV.textContent=k(aum);famV.textContent=fam.toFixed(1).replace(".",",")+"×";feeV.textContent=(fee*100).toFixed(1).replace(".",",")+"%";durV.textContent=dur+" anni";
-  const commCli=aum*fam*fee;        // commissione/anno per cliente (con famiglia)
+  const cm=+cmSl.value,aum=+aumSl.value,ref=+famSl.value,fee=+feeSl.value/100,dur=+durSl.value;
+  const mult=1+ref;                 // 0 referenze = ×1, ogni referenza vale un cliente in più allo stesso gestito
+  cmV.textContent=cm;aumV.textContent=k(aum);famV.textContent=ref+(ref===1?" referenza":" referenze");feeV.textContent=(fee*100).toFixed(1).replace(".",",")+"%";durV.textContent=dur+" anni";
+  const commCli=aum*mult*fee;       // commissione/anno per cliente (incluse referenze)
   const cliAnno=cm*12;              // clienti acquisiti quest'anno
-  const aumAnno=cliAnno*aum*fam;    // gestito acquisito quest'anno
   const y1=cliAnno*commCli;         // commissioni quest'anno (coorte, anno pieno)
   const val=y1*dur;                 // valore del lavoro di quest'anno sulla permanenza
   // metrics
-  m_cli.textContent=cliAnno; m_aum.textContent=k(aumAnno);
+  m_cli.textContent=cliAnno;
   m_y1.textContent=eur(y1);
   m_val.textContent=k(val); m_val_s.textContent="se restano "+dur+" anni";
   // card 1 cliente
-  c_aum.textContent=k(aum*fam); c_comm.textContent=eur(commCli); c_ltv.textContent=k(commCli*dur);
+  c_aum.textContent=k(aum*mult); c_comm.textContent=eur(commCli); c_ltv.textContent=k(commCli*dur);
   // card lavoro di quest'anno
-  w_cli.textContent=cliAnno; w_aum.textContent=k(aumAnno); w_y1.textContent=eur(y1); w_val.textContent=k(val);
-  const roi=Math.round(val/COSTO);
-  punch.innerHTML="Il lavoro che fai quest'anno con noi ti porta <b>"+eur(y1)+"</b> di commissioni già nel primo anno.<br><br>Ma quei clienti restano in media "+dur+" anni: lo stesso lavoro, nel tempo, vale <b>"+k(val)+"</b>.<br><br>Ti costa "+eur(COSTO)+". Non è un costo: è gestito che si accumula. <b>ROI ~"+roi+"×.</b>";
+  w_cli.textContent=cliAnno; w_y1.textContent=eur(y1); w_val.textContent=k(val);
   // chart: valore cumulato del lavoro di quest'anno, anno per anno fino alla durata
   const labels=[],data=[];
   for(let y=1;y<=dur;y++){labels.push("Anno "+y);data.push(Math.round(y1*y));}
