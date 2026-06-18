@@ -44,7 +44,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 <div class="hdr">
   <div class="eyebrow">AI Elite Advisory</div>
   <h1>Simulatore del Gestito</h1>
-  <p>Quanto guadagni <b>ogni anno</b> con il sistema — e quanto <b>cumuli negli anni</b> — in base ai clienti che ti portiamo e a quanto patrimonio gestiscono. Nei tuoi numeri.</p>
+  <p>Quanto ti rende <b>quest'anno</b> il lavoro che facciamo insieme — e quanto vale <b>nel tempo</b>, se i clienti che ti portiamo restano 6, 8 o 15 anni. Nei tuoi numeri.</p>
 </div>
 
 <div class="ctrls">
@@ -56,14 +56,14 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="metrics">
-  <div class="metric"><label>Clienti / anno</label><div class="mv gold" id="m_cli">—</div></div>
-  <div class="metric"><label>Commissioni anno 1</label><div class="mv green" id="m_y1">—</div></div>
-  <div class="metric"><label>Commissioni / anno a regime</label><div class="mv green" id="m_reg">—</div><div class="ms" id="m_reg_s">—</div></div>
-  <div class="metric"><label>Cumulato (sulla durata)</label><div class="mv gold" id="m_cum">—</div></div>
+  <div class="metric"><label>Clienti acquisiti / anno</label><div class="mv gold" id="m_cli">—</div></div>
+  <div class="metric"><label>Gestito acquisito / anno</label><div class="mv gold" id="m_aum">—</div></div>
+  <div class="metric"><label>Commissioni quest'anno</label><div class="mv green" id="m_y1">—</div></div>
+  <div class="metric"><label>Valore sulla durata</label><div class="mv green" id="m_val">—</div><div class="ms" id="m_val_s">—</div></div>
 </div>
 
 <div class="chart-area">
-  <h3>Le tue commissioni, anno per anno</h3>
+  <h3>Quanto vale nel tempo il lavoro di quest'anno (commissioni cumulate)</h3>
   <div style="position:relative;height:230px"><canvas id="ch"></canvas></div>
 </div>
 
@@ -75,10 +75,11 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
     <div class="row"><span class="rl">Valore vita</span><span class="rv g" id="c_ltv">—</span></div>
   </div>
   <div class="card">
-    <div class="ct">Il tuo portafoglio a regime</div>
-    <div class="row"><span class="rl">Clienti attivi</span><span class="rv gold" id="p_cli">—</span></div>
-    <div class="row"><span class="rl">Gestito totale</span><span class="rv gold" id="p_aum">—</span></div>
-    <div class="row"><span class="rl">Commissioni / anno</span><span class="rv g" id="p_comm">—</span></div>
+    <div class="ct">Il lavoro di quest'anno</div>
+    <div class="row"><span class="rl">Clienti acquisiti</span><span class="rv gold" id="w_cli">—</span></div>
+    <div class="row"><span class="rl">Gestito acquisito</span><span class="rv gold" id="w_aum">—</span></div>
+    <div class="row"><span class="rl">Commissioni quest'anno</span><span class="rv g" id="w_y1">—</span></div>
+    <div class="row"><span class="rl">Valore su tutta la durata</span><span class="rv g" id="w_val">—</span></div>
   </div>
   <div class="card big">
     <div class="ct">Il ribaltamento</div>
@@ -87,7 +88,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="foot">
-  Dati illustrativi. "Fattore famiglia" = quota di nucleo (coniuge/figli) acquisita con ogni cliente. Si assume che ogni cliente resti per la durata media indicata e che il sistema porti i clienti in modo continuativo. Costo servizio di riferimento: €1.000/mese + €450 ads = €17.400/anno.
+  Dati illustrativi. Mostra il valore dei <b>clienti acquisiti in un anno</b> di lavoro insieme: quanto rendono il primo anno e quanto valgono in totale se restano la durata media indicata. "Fattore famiglia" = quota di nucleo (coniuge/figli) acquisita con ogni cliente. Costo servizio di riferimento: €1.000/mese + €450 ads = €17.400/anno.
 </div>
 
 <script>
@@ -99,28 +100,28 @@ function calc(){
   const cm=+cmSl.value,aum=+aumSl.value,fam=+famSl.value,fee=+feeSl.value/100,dur=+durSl.value;
   cmV.textContent=cm;aumV.textContent=k(aum);famV.textContent=fam.toFixed(1).replace(".",",")+"×";feeV.textContent=(fee*100).toFixed(1).replace(".",",")+"%";durV.textContent=dur+" anni";
   const commCli=aum*fam*fee;        // commissione/anno per cliente (con famiglia)
-  const cliAnno=cm*12;
-  const annual=y=>cliAnno*Math.min(y,dur)*commCli;   // commissioni di quell'anno
-  const y1=annual(1), regime=annual(dur);
-  let cum=0; for(let y=1;y<=dur;y++)cum+=annual(y);
+  const cliAnno=cm*12;              // clienti acquisiti quest'anno
+  const aumAnno=cliAnno*aum*fam;    // gestito acquisito quest'anno
+  const y1=cliAnno*commCli;         // commissioni quest'anno (coorte, anno pieno)
+  const val=y1*dur;                 // valore del lavoro di quest'anno sulla permanenza
   // metrics
-  m_cli.textContent=cliAnno; m_y1.textContent=eur(y1);
-  m_reg.textContent=eur(regime); m_reg_s.textContent="anno "+dur;
-  m_cum.textContent=k(cum);
-  // cards
+  m_cli.textContent=cliAnno; m_aum.textContent=k(aumAnno);
+  m_y1.textContent=eur(y1);
+  m_val.textContent=k(val); m_val_s.textContent="se restano "+dur+" anni";
+  // card 1 cliente
   c_aum.textContent=k(aum*fam); c_comm.textContent=eur(commCli); c_ltv.textContent=k(commCli*dur);
-  const pCli=cliAnno*dur, pAum=pCli*aum*fam;
-  p_cli.textContent=pCli; p_aum.textContent=k(pAum); p_comm.textContent=eur(regime);
-  const roi=Math.round(cum/(COSTO*dur));
-  punch.innerHTML="Col sistema, in "+dur+" anni costruisci un portafoglio da <b>"+k(pAum)+"</b> di gestito che ti rende <b>"+eur(regime)+"/anno</b> a regime, per un totale di <b>"+k(cum)+"</b> di commissioni.<br><br>Ti costa "+eur(COSTO)+"/anno. Non è un costo: è il tuo portafoglio che cresce. <b>ROI ~"+roi+"×.</b>";
-  // chart: commissioni per anno (1..max(10,dur))
-  const N=Math.max(10,dur),labels=[],data=[];
-  for(let y=1;y<=N;y++){labels.push("Anno "+y);data.push(Math.round(annual(y)));}
+  // card lavoro di quest'anno
+  w_cli.textContent=cliAnno; w_aum.textContent=k(aumAnno); w_y1.textContent=eur(y1); w_val.textContent=k(val);
+  const roi=Math.round(val/COSTO);
+  punch.innerHTML="Il lavoro che fai quest'anno con noi ti porta <b>"+eur(y1)+"</b> di commissioni già nel primo anno.<br><br>Ma quei clienti restano in media "+dur+" anni: lo stesso lavoro, nel tempo, vale <b>"+k(val)+"</b>.<br><br>Ti costa "+eur(COSTO)+". Non è un costo: è gestito che si accumula. <b>ROI ~"+roi+"×.</b>";
+  // chart: valore cumulato del lavoro di quest'anno, anno per anno fino alla durata
+  const labels=[],data=[];
+  for(let y=1;y<=dur;y++){labels.push("Anno "+y);data.push(Math.round(y1*y));}
   if(chart)chart.destroy();
   chart=new Chart(document.getElementById("ch"),{type:"bar",
-    data:{labels,datasets:[{label:"Commissioni/anno",data,backgroundColor:"rgba(201,168,76,.55)",borderColor:"#C9A84C",borderWidth:1,borderRadius:3}]},
+    data:{labels,datasets:[{label:"Commissioni cumulate",data,backgroundColor:"rgba(109,191,138,.45)",borderColor:"#6DBF8A",borderWidth:1,borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a1a",borderColor:"#333",borderWidth:1,titleColor:"#aaa",bodyColor:"#F5F0E8",callbacks:{label:c=>eur(c.parsed.y)+" di commissioni"}}},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a1a",borderColor:"#333",borderWidth:1,titleColor:"#aaa",bodyColor:"#F5F0E8",callbacks:{label:c=>eur(c.parsed.y)+" cumulati"}}},
       scales:{x:{ticks:{color:"#666",font:{size:10}},grid:{display:false}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
   });
 }
