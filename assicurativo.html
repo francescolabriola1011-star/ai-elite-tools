@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Break-even Assicurativo / PAC — AI Elite Advisory</title>
+<style>
+  :root{
+    --bg:#F4F7F7; --surface:#FFFFFF; --surface-2:#EDF2F2; --border:#D9E2E3;
+    --text:#152229; --muted:#5B6C74; --accent:#0D8F7A; --accent-2:#0A6F5F;
+    --good:#137A4E; --good-bg:#E4F3EB; --cost:#A65A16; --bad:#BB3E2A;
+    --shadow:0 1px 2px rgba(16,40,45,.05),0 8px 24px rgba(16,40,45,.06);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0B1417; --surface:#101E23; --surface-2:#16262C; --border:#243940;
+      --text:#E6EDEF; --muted:#91A5AD; --accent:#2DD4BF; --accent-2:#5EEAD4;
+      --good:#34D399; --good-bg:#0F2A22; --cost:#E0A264; --bad:#F87171;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1417; --surface:#101E23; --surface-2:#16262C; --border:#243940;
+    --text:#E6EDEF; --muted:#91A5AD; --accent:#2DD4BF; --accent-2:#5EEAD4;
+    --good:#34D399; --good-bg:#0F2A22; --cost:#E0A264; --bad:#F87171;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"]{
+    --bg:#F4F7F7; --surface:#FFFFFF; --surface-2:#EDF2F2; --border:#D9E2E3;
+    --text:#152229; --muted:#5B6C74; --accent:#0D8F7A; --accent-2:#0A6F5F;
+    --good:#137A4E; --good-bg:#E4F3EB; --cost:#A65A16; --bad:#BB3E2A;
+    --shadow:0 1px 2px rgba(16,40,45,.05),0 8px 24px rgba(16,40,45,.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:28px 20px 56px}
+  .nav{font-size:13px; margin-bottom:18px}
+  .nav a{color:var(--accent-2); text-decoration:none; font-weight:600}
+  .nav a:hover{text-decoration:underline}
+  header{margin-bottom:22px}
+  .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-2); font-weight:700}
+  h1{font-size:clamp(22px,4vw,30px); margin:6px 0 4px; letter-spacing:-.01em; text-wrap:balance}
+  .sub{color:var(--muted); font-size:15px; max-width:60ch}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow)}
+  .panel{padding:20px 22px}
+  .panel h2{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 16px; font-weight:700}
+  .grid-in{display:grid; grid-template-columns:repeat(2,1fr); gap:18px 28px}
+  @media (max-width:560px){.grid-in{grid-template-columns:1fr}}
+  .field label{display:flex; justify-content:space-between; align-items:baseline; font-size:14px; font-weight:600; margin-bottom:8px; gap:10px}
+  .field label .val{color:var(--accent-2); font-weight:700; font-size:15px}
+  .field input[type=range]{width:100%; accent-color:var(--accent); height:22px; cursor:pointer}
+  .field .hint{font-size:12px; color:var(--muted); margin-top:3px}
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:18px}
+  @media (max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 16px 15px}
+  .kpi .k-lab{font-size:12px; color:var(--muted); font-weight:600; min-height:32px}
+  .kpi .k-val{font-size:clamp(20px,3.4vw,26px); font-weight:750; letter-spacing:-.02em; margin-top:6px}
+  .kpi .k-sub{font-size:12px; color:var(--muted); margin-top:3px}
+  .kpi.accent{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+  .kpi.accent .k-val{color:var(--accent-2)}
+  .profit .k-val{color:var(--good)}
+  .profit.neg .k-val{color:var(--bad)}
+  .be{margin-top:18px; background:var(--good-bg); border:1px solid color-mix(in srgb,var(--good) 30%, transparent); border-radius:12px; padding:18px 20px; display:flex; gap:16px; align-items:flex-start}
+  .be.neg{background:color-mix(in srgb,var(--bad) 12%, transparent); border-color:color-mix(in srgb,var(--bad) 34%, transparent)}
+  .be .dot{flex:0 0 auto; width:10px; height:10px; border-radius:50%; background:var(--good); margin-top:7px}
+  .be.neg .dot{background:var(--bad)}
+  .be .txt{font-size:15px}
+  .be .big{font-size:19px; font-weight:750; letter-spacing:-.01em; margin-bottom:3px}
+  table{width:100%; border-collapse:collapse; margin-top:4px; font-size:14px}
+  .brk{margin-top:18px}
+  .brk caption{text-align:left; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:8px}
+  td{padding:9px 0; border-bottom:1px solid var(--border)}
+  td.r{text-align:right; font-weight:650; font-variant-numeric:tabular-nums}
+  tr.total td{border-bottom:none; border-top:2px solid var(--border); padding-top:12px; font-weight:750; font-size:15px}
+  .cost-c{color:var(--cost)}
+  .assump{font-size:12px; color:var(--muted); margin-top:10px}
+  .foot{margin-top:20px; font-size:13px; color:var(--muted); display:flex; flex-direction:column; gap:6px}
+  .foot b{color:var(--text)}
+  .actions{display:flex; gap:10px; margin-top:16px}
+  button{font:inherit; font-weight:650; padding:9px 16px; border-radius:9px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+  .theme{position:fixed; top:14px; right:14px; width:38px; height:38px; padding:0; border-radius:50%; display:grid; place-items:center; font-size:16px}
+</style>
+</head>
+<body>
+<button class="theme" id="themeBtn" aria-label="Cambia tema">◐</button>
+<div class="wrap">
+  <nav class="nav"><a href="./index.html">← Simulatore del Gestito (CF)</a></nav>
+  <header>
+    <div class="eyebrow">AI Elite Advisory · Simulatore</div>
+    <h1>Break-even Assicurativo / Piano d'Accumulo</h1>
+    <p class="sub">Muovi le 5 leve e vedi quanti clienti sui tuoi appuntamenti bastano per andare in pari. Le commissioni sui PAC si incassano subito (precontate).</p>
+  </header>
+
+  <div class="card panel">
+    <h2>Le 5 leve</h2>
+    <div class="grid-in">
+      <div class="field">
+        <label for="app">Appuntamenti / mese <span class="val" id="appV">8</span></label>
+        <input type="range" id="app" min="2" max="20" step="1" value="8">
+        <div class="hint">Garantiti dal setter dedicato (garanzia: 8/mese).</div>
+      </div>
+      <div class="field">
+        <label for="close">Chiusura (close rate) <span class="val" id="closeV">25%</span></label>
+        <input type="range" id="close" min="5" max="60" step="1" value="25">
+        <div class="hint">% di appuntamenti che diventano clienti.</div>
+      </div>
+      <div class="field">
+        <label for="premio">Premio PAC <span class="val" id="premioV">200 €/mese</span></label>
+        <input type="range" id="premio" min="50" max="600" step="10" value="200">
+        <div class="hint">Versamento mensile medio del cliente finale.</div>
+      </div>
+      <div class="field">
+        <label for="anni">Durata piano <span class="val" id="anniV">10 anni</span></label>
+        <input type="range" id="anni" min="3" max="30" step="1" value="10">
+        <div class="hint">Su cui si calcola la commissione precontata.</div>
+      </div>
+      <div class="field">
+        <label for="comm">Commissione sul piano <span class="val" id="commV">6%</span></label>
+        <input type="range" id="comm" min="1" max="15" step="0.5" value="6">
+        <div class="hint">% sul montante totale, incassata subito.</div>
+      </div>
+    </div>
+    <div class="actions"><button id="reset">Ripristina</button></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k-lab">Clienti nuovi nel trimestre</div><div class="k-val" id="kClienti">—</div><div class="k-sub" id="kClientiSub"></div></div>
+    <div class="kpi"><div class="k-lab">Commissione subito / cliente</div><div class="k-val" id="kComm">—</div><div class="k-sub" id="kCommSub"></div></div>
+    <div class="kpi accent"><div class="k-lab">Incasso commissioni (trimestre)</div><div class="k-val" id="kIncasso">—</div><div class="k-sub">solo nuovi PAC chiusi</div></div>
+    <div class="kpi profit" id="kProfitCard"><div class="k-lab">Profitto netto (trimestre)</div><div class="k-val" id="kProfit">—</div><div class="k-sub" id="kRoi"></div></div>
+  </div>
+
+  <div class="be" id="beBox">
+    <div class="dot"></div>
+    <div class="txt">
+      <div class="big" id="beBig">—</div>
+      <div id="beDetail"></div>
+    </div>
+  </div>
+
+  <table class="brk card panel" style="display:table; width:100%">
+    <caption>Costo del trimestre — Pack C Setter (Elite)</caption>
+    <tbody>
+      <tr><td>Servizio (Pack C Elite)</td><td class="r">4.000 €</td></tr>
+      <tr><td>Ads (450 € × 3 mesi)</td><td class="r">1.350 €</td></tr>
+      <tr><td>Appuntamenti <span id="cAptN" style="color:var(--muted)"></span></td><td class="r" id="cApt">—</td></tr>
+      <tr class="total"><td>Totale costo</td><td class="r cost-c" id="cTot">—</td></tr>
+    </tbody>
+  </table>
+  <p class="assump">Costanti fisse: trimestre (3 mesi) · servizio €4.000 · ads €450/mese · €60 per appuntamento presentato.</p>
+
+  <div class="foot">
+    <div><b>Nota ricorrenza:</b> il modello conta solo la commissione incassata subito. Ogni PAC resta attivo per anni → dal 2° trimestre è quasi tutto margine.</div>
+    <div><b>In call:</b> «Ti bastano <span id="footBe">N</span> clienti per rientrare di tutto. Il setter te ne porta 8 al mese: tutto il resto è tuo.»</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MESI=3, SERV=4000, ADS=450, APTC=60;
+  var eur0=new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0});
+  var eur=function(n){return eur0.format(Math.round(n));};
+  var it1=function(n){return n.toFixed(1).replace('.',',');};
+  var ids=['app','close','premio','anni','comm'];
+  var el={}; ids.forEach(function(i){el[i]=document.getElementById(i);});
+  var defs={app:8,close:25,premio:200,anni:10,comm:6};
+
+  function calc(){
+    var app=+el.app.value, close=+el.close.value/100, premio=+el.premio.value,
+        anni=+el.anni.value, comm=+el.comm.value/100;
+
+    document.getElementById('appV').textContent=app;
+    document.getElementById('closeV').textContent=(+el.close.value)+'%';
+    document.getElementById('premioV').textContent=premio+' €/mese';
+    document.getElementById('anniV').textContent=anni+(anni===1?' anno':' anni');
+    document.getElementById('commV').textContent=(+el.comm.value)+'%';
+
+    var clientiMese=app*close;
+    var clientiTrim=clientiMese*MESI;
+    var montante=premio*12*anni;
+    var commCliente=montante*comm;
+    var incasso=clientiTrim*commCliente;
+
+    var aptTot=app*MESI;
+    var costoApt=APTC*aptTot;
+    var costoTot=SERV+ADS*MESI+costoApt;
+    var profitto=incasso-costoTot;
+    var roi=costoTot>0?profitto/costoTot*100:0;
+
+    var beClienti=commCliente>0?Math.ceil(costoTot/commCliente):0;
+    var beApt=close>0?Math.ceil(beClienti/close):0;
+
+    document.getElementById('kClienti').textContent=clientiTrim<10?it1(clientiTrim):Math.round(clientiTrim);
+    document.getElementById('kClientiSub').textContent='≈ '+it1(clientiMese)+' / mese';
+    document.getElementById('kComm').textContent=eur(commCliente);
+    document.getElementById('kCommSub').textContent='montante '+eur(montante)+' × '+(+el.comm.value)+'%';
+    document.getElementById('kIncasso').textContent=eur(incasso);
+    document.getElementById('kProfit').textContent=(profitto>=0?'+':'')+eur(profitto);
+    document.getElementById('kRoi').textContent='ROI '+(roi>=0?'+':'')+roi.toFixed(0)+'% sul costo';
+    document.getElementById('kProfitCard').classList.toggle('neg',profitto<0);
+
+    var beBox=document.getElementById('beBox');
+    var ok=clientiTrim>=beClienti;
+    beBox.classList.toggle('neg',!ok);
+    document.getElementById('beBig').textContent='Vai in pari con '+beClienti+(beClienti===1?' cliente':' clienti')+' ≈ '+beApt+' appuntamenti';
+    var margine=clientiTrim-beClienti;
+    document.getElementById('beDetail').textContent = ok
+      ? 'Con le tue leve ne chiudi ~'+it1(clientiTrim)+' → superi il break-even di '+it1(margine)+' clienti. Ogni cliente oltre vale '+eur(commCliente)+' subito.'
+      : 'Con le tue leve ne chiudi ~'+it1(clientiTrim)+': sotto soglia di '+it1(Math.abs(margine))+'. Alza close, premio o durata per rientrare.';
+    document.getElementById('footBe').textContent=beClienti;
+
+    document.getElementById('cAptN').textContent='(60 € × '+aptTot+' apt)';
+    document.getElementById('cApt').textContent=eur(costoApt);
+    document.getElementById('cTot').textContent=eur(costoTot);
+  }
+
+  ids.forEach(function(i){el[i].addEventListener('input',calc);});
+  document.getElementById('reset').addEventListener('click',function(){
+    ids.forEach(function(i){el[i].value=defs[i];}); calc();
+  });
+
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next = cur==='dark' ? 'light' : cur==='light' ? 'dark'
+      : (window.matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark');
+    document.documentElement.setAttribute('data-theme',next);
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
