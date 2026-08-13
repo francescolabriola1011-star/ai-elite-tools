@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quanto vale la tua agenda — Assicurativo / PAC</title>
+<title>Quanto vale la tua agenda — TCM (temporanea caso morte)</title>
 <style>
   :root{
     --bg:#F4F7F7; --surface:#FFFFFF; --surface-2:#EDF2F2; --border:#D9E2E3;
@@ -75,17 +75,7 @@
   .be .dot{flex:0 0 auto; width:10px; height:10px; border-radius:50%; background:var(--good); margin-top:7px}
   .be .txt{font-size:15px}
   .be .big{font-size:19px; font-weight:750; letter-spacing:-.01em; margin-bottom:3px}
-  .two{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px}
-  @media (max-width:720px){.two{grid-template-columns:1fr}}
-  table{width:100%; border-collapse:collapse; font-size:14px}
-  caption{text-align:left; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:10px}
-  td{padding:9px 0; border-bottom:1px solid var(--border)}
-  td.r{text-align:right; font-weight:650; font-variant-numeric:tabular-nums}
-  tr.total td{border-bottom:none; border-top:2px solid var(--border); padding-top:12px; font-weight:750; font-size:15px}
-  .good-c{color:var(--good)}
   .assump{font-size:12px; color:var(--muted); margin-top:10px}
-  .foot{margin-top:20px; font-size:13px; color:var(--muted); display:flex; flex-direction:column; gap:8px}
-  .foot b{color:var(--text)}
   .actions{display:flex; gap:10px; margin-top:16px}
   button{font:inherit; font-weight:650; padding:9px 16px; border-radius:9px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); cursor:pointer}
   button:hover{border-color:var(--accent)}
@@ -96,11 +86,11 @@
 <body>
 <button class="theme" id="themeBtn" aria-label="Cambia tema">◐</button>
 <div class="wrap">
-  <nav class="nav"><a href="./index.html">← Simulatore del Gestito (CF)</a></nav>
+  <nav class="nav"><a href="./index.html">← Simulatore del Gestito (CF)</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="./assicurativo.html">Assicurativo / PAC</a></nav>
   <header>
     <div class="eyebrow">AI Elite Advisory · Simulatore</div>
-    <h1>Quanto vale la tua agenda</h1>
-    <p class="sub">Con 8 appuntamenti al mese garantiti, quanti piani previdenziali sottoscrivi, quanto incassi subito e quanto continua a pagarti l'anno dopo.</p>
+    <h1>Quanto vale la tua agenda — TCM</h1>
+    <p class="sub">Con gli appuntamenti che ti portiamo in agenda, quante temporanee caso morte sottoscrivi, quanto incassi subito sul primo premio e quanto continua a pagarti ogni anno di rinnovo.</p>
   </header>
 
   <div class="card panel">
@@ -124,33 +114,27 @@
         <div class="hint">% di appuntamenti che sottoscrivono.</div>
       </div>
       <div class="field">
-        <label for="premio">Premio PAC <span class="val" id="premioV">200 €/mese</span></label>
-        <input type="range" id="premio" min="50" max="500" step="10" value="200">
-        <div class="hint">Versamento mensile medio. Il tetto deducibile è 430 €/mese.</div>
+        <label for="premio">Premio annuale TCM <span class="val" id="premioV">600 €/anno</span></label>
+        <input type="range" id="premio" min="100" max="3000" step="50" value="600">
+        <div class="hint">Premio medio annuo della polizza.</div>
       </div>
       <div class="field">
-        <label for="pre">La tua provvigione di acquisizione <span class="val" id="preV">40%</span></label>
-        <input type="range" id="pre" min="10" max="60" step="1" value="40">
+        <label for="pre">La tua provvigione sul primo premio <span class="val" id="preV">40%</span></label>
+        <input type="range" id="pre" min="5" max="90" step="1" value="40">
         <div class="hint">% del <b>primo premio annuo</b>, che incassi subito.</div>
       </div>
       <div class="field">
-        <label for="ric">La tua provvigione ricorrente <span class="val" id="ricV">4%</span></label>
-        <input type="range" id="ric" min="0" max="10" step="0.5" value="4">
-        <div class="hint">% su ogni premio versato, finché il piano vive.</div>
-      </div>
-      <div class="field">
-        <label for="anni">Durata media dei piani <span class="val" id="anniV">15 anni</span></label>
-        <input type="range" id="anni" min="5" max="30" step="1" value="15">
-        <div class="hint">Serve solo per il montante e il valore sull'intera vita del piano.</div>
+        <label for="ric">La tua provvigione ricorrente <span class="val" id="ricV">15%</span></label>
+        <input type="range" id="ric" min="5" max="40" step="1" value="15">
+        <div class="hint">% su ogni premio di rinnovo, finché la polizza resta in vita.</div>
       </div>
     </div>
-    <p class="assump" id="ponte"></p>
     <div class="actions"><button id="reset">Ripristina</button></div>
   </div>
 
   <div class="kpis">
-    <div class="kpi"><div class="k-lab">Nuovi clienti previdenziali</div><div class="k-val" id="kClienti">—</div><div class="k-sub" id="kClientiSub"></div></div>
-    <div class="kpi accent"><div class="k-lab">Premi ricorrenti in portafoglio</div><div class="k-val" id="kPort">—</div><div class="k-sub">all'anno, a fine periodo</div></div>
+    <div class="kpi"><div class="k-lab">Nuovi clienti TCM</div><div class="k-val" id="kClienti">—</div><div class="k-sub" id="kClientiSub"></div></div>
+    <div class="kpi accent"><div class="k-lab">Premi in portafoglio</div><div class="k-val" id="kPort">—</div><div class="k-sub">all'anno, a fine periodo</div></div>
     <div class="kpi money"><div class="k-lab">Quanto incassi nel periodo</div><div class="k-val" id="kInc">—</div><div class="k-sub" id="kIncSub"></div></div>
     <div class="kpi money"><div class="k-lab">Quanto incassi l'anno dopo</div><div class="k-val" id="kAnno2">—</div><div class="k-sub">senza acquisire nessuno</div></div>
   </div>
@@ -162,7 +146,6 @@
       <div id="beDetail"></div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -170,9 +153,9 @@
   var eur0=new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0});
   var eur=function(n){return eur0.format(Math.round(n));};
   var it1=function(n){return n.toFixed(1).replace('.',',');};
-  var ids=['app','close','premio','pre','ric','anni'];
+  var ids=['app','close','premio','pre','ric'];
   var el={}; ids.forEach(function(i){el[i]=document.getElementById(i);});
-  var defs={app:8,close:25,premio:200,pre:40,ric:4,anni:15};
+  var defs={app:8,close:25,premio:600,pre:40,ric:15};
   var MESI=3;
 
   var packs=[].slice.call(document.querySelectorAll('.pack'));
@@ -185,30 +168,20 @@
 
   function calc(){
     var app=+el.app.value, close=+el.close.value/100, premio=+el.premio.value,
-        pre=+el.pre.value/100, ric=+el.ric.value/100, anni=+el.anni.value;
+        pre=+el.pre.value/100, ric=+el.ric.value/100;
 
     document.getElementById('appV').textContent=app;
     document.getElementById('closeV').textContent=(+el.close.value)+'%';
-    document.getElementById('premioV').textContent=premio+' €/mese';
+    document.getElementById('premioV').textContent=premio+' €/anno';
     document.getElementById('preV').textContent=(+el.pre.value)+'%';
     document.getElementById('ricV').textContent=(+el.ric.value)+'%';
-    document.getElementById('anniV').textContent=anni+(anni===1?' anno':' anni');
 
     var clientiMese=app*close;
     var clientiTot=clientiMese*MESI;
-    var premioAnno=premio*12;
-    var portafoglio=clientiTot*premioAnno;
-    var acqCliente=premioAnno*pre;
-    var acq=clientiTot*acqCliente;
-
-    var premiVersati=premio*clientiMese*(MESI*(MESI+1)/2);
-    var ricPeriodo=premiVersati*ric;
-    var incasso=acq+ricPeriodo;
+    var portafoglio=clientiTot*premio;
+    var acqCliente=premio*pre;
+    var incasso=clientiTot*acqCliente;
     var annoDue=portafoglio*ric;
-
-    var montante=portafoglio*anni;
-    var ricTot=montante*ric;
-    var vita=acq+ricTot;
 
     document.getElementById('kClienti').textContent=clientiTot<10?it1(clientiTot):Math.round(clientiTot);
     document.getElementById('kClientiSub').textContent='≈ '+it1(clientiMese)+' / mese · '+MESI+' mesi';
@@ -218,22 +191,9 @@
     document.getElementById('kAnno2').textContent=eur(annoDue);
 
     document.getElementById('beBig').textContent=
-      'In '+MESI+' mesi: '+(clientiTot<10?it1(clientiTot):Math.round(clientiTot))+' nuovi clienti e '+eur(incasso)+' incassati';
+      'In '+MESI+' mesi: '+(clientiTot<10?it1(clientiTot):Math.round(clientiTot))+' nuove TCM e '+eur(incasso)+' incassati';
     document.getElementById('beDetail').textContent=
-      'Ti resta un portafoglio da '+eur(portafoglio)+' di premi all’anno. Se non acquisisci più nessuno, quel portafoglio ti paga comunque '+eur(annoDue)+' l’anno prossimo, e '+eur(ricTot)+' su tutta la durata dei piani.';
-
-    document.getElementById('rAcq').textContent=eur(acq);
-    document.getElementById('rRic').textContent=eur(ricPeriodo);
-    document.getElementById('rTot').textContent=eur(incasso);
-
-    document.getElementById('rMont').textContent=eur(montante);
-    document.getElementById('rRicTot').textContent=eur(ricTot);
-    document.getElementById('rVita').textContent=eur(vita);
-    document.getElementById('vitaNota').textContent=
-      'Sui '+anni+' anni di durata media, ipotizzando che i piani restino attivi.';
-
-    document.getElementById('ponte').textContent=
-      'Ponte: il '+(+el.pre.value)+'% sul primo premio annuo equivale al '+ (pre*100/anni).toFixed(1).replace('.',',') +'% sul montante di un piano da '+anni+' anni (montante per cliente '+eur(premioAnno*anni)+').';
+      'Ti resta un portafoglio da '+eur(portafoglio)+' di premi all’anno. Se non acquisisci più nessuno, quel portafoglio ti paga comunque '+eur(annoDue)+' l’anno prossimo, e altrettanto ogni anno in cui le polizze restano in vita.';
   }
 
   ids.forEach(function(i){el[i].addEventListener('input',calc);});
