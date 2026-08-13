@@ -222,16 +222,6 @@
     document.getElementById('beDetail').textContent=
       'Ti resta un portafoglio da '+eur(portafoglio)+' di premi all’anno. Se non acquisisci più nessuno, quel portafoglio ti paga comunque '+eur(annoDue)+' l’anno prossimo, e '+eur(ricTot)+' su tutta la durata dei piani.';
 
-    document.getElementById('rAcq').textContent=eur(acq);
-    document.getElementById('rRic').textContent=eur(ricPeriodo);
-    document.getElementById('rTot').textContent=eur(incasso);
-
-    document.getElementById('rMont').textContent=eur(montante);
-    document.getElementById('rRicTot').textContent=eur(ricTot);
-    document.getElementById('rVita').textContent=eur(vita);
-    document.getElementById('vitaNota').textContent=
-      'Sui '+anni+' anni di durata media, ipotizzando che i piani restino attivi.';
-
     document.getElementById('ponte').textContent=
       'Ponte: il '+(+el.pre.value)+'% sul primo premio annuo equivale al '+ (pre*100/anni).toFixed(1).replace('.',',') +'% sul montante di un piano da '+anni+' anni (montante per cliente '+eur(premioAnno*anni)+').';
   }
