@@ -96,7 +96,7 @@
 <body>
 <button class="theme" id="themeBtn" aria-label="Cambia tema">◐</button>
 <div class="wrap">
-  <nav class="nav"><a href="./index.html">← Simulatore del Gestito (CF)</a></nav>
+  <nav class="nav"><a href="./index.html">← Simulatore del Gestito (CF)</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="./tcm.html">Simulatore TCM</a></nav>
   <header>
     <div class="eyebrow">AI Elite Advisory · Simulatore</div>
     <h1>Quanto vale la tua agenda</h1>
@@ -130,12 +130,12 @@
       </div>
       <div class="field">
         <label for="pre">La tua provvigione di acquisizione <span class="val" id="preV">40%</span></label>
-        <input type="range" id="pre" min="10" max="60" step="1" value="40">
+        <input type="range" id="pre" min="5" max="90" step="1" value="40">
         <div class="hint">% del <b>primo premio annuo</b>, che incassi subito.</div>
       </div>
       <div class="field">
         <label for="ric">La tua provvigione ricorrente <span class="val" id="ricV">4%</span></label>
-        <input type="range" id="ric" min="0" max="10" step="0.5" value="4">
+        <input type="range" id="ric" min="5" max="40" step="1" value="5">
         <div class="hint">% su ogni premio versato, finché il piano vive.</div>
       </div>
       <div class="field">
@@ -172,7 +172,7 @@
   var it1=function(n){return n.toFixed(1).replace('.',',');};
   var ids=['app','close','premio','pre','ric','anni'];
   var el={}; ids.forEach(function(i){el[i]=document.getElementById(i);});
-  var defs={app:8,close:25,premio:200,pre:40,ric:4,anni:15};
+  var defs={app:8,close:25,premio:200,pre:40,ric:5,anni:15};
   var MESI=3;
 
   var packs=[].slice.call(document.querySelectorAll('.pack'));
