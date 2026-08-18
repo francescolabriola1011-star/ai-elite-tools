@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulatore Parco Clienti — interno AI Elite</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+.hdr{padding:24px 32px 20px;border-bottom:1px solid #2a2a2a;background:#111}
+.eyebrow{font-size:11px;letter-spacing:4px;color:#C9A84C;margin-bottom:6px;text-transform:uppercase}
+.hdr h1{font-size:24px;font-weight:700}
+.hdr p{font-size:13px;color:#888;margin-top:6px;max-width:840px;line-height:1.5}
+.warn{margin-top:10px;font-size:12px;color:#D98C6A;letter-spacing:.5px}
+.ctrls{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #222;background:#0F0F0F}
+@media(max-width:900px){.ctrls{grid-template-columns:1fr 1fr}}
+.sl{padding:12px 18px;border-right:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a}
+.sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
+.sl-val{font-size:15px;font-weight:700;color:#C9A84C;font-family:monospace}
+.sl small{display:block;font-size:10px;color:#555;margin-top:2px;line-height:1.3}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #222}
+@media(max-width:900px){.metrics{grid-template-columns:1fr 1fr}}
+.metric{padding:16px 20px;border-right:1px solid #1a1a1a}
+.metric label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.metric .mv{font-size:21px;font-weight:700;font-family:monospace}
+.metric .mv.gold{color:#C9A84C}.metric .mv.green{color:#6DBF8A}.metric .mv.red{color:#D9705F}
+.metric .ms{font-size:10px;color:#666;margin-top:3px;line-height:1.4}
+.chart-area{padding:22px 32px 8px}
+.chart-area h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:400}
+.scroller{overflow-x:auto}
+svg{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:18px;font-size:12px;color:#888;margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:20px;height:3px;border-radius:2px;display:inline-block}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 32px 30px}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+.card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
+.card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
+.ct{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a}
+.row:last-child{border:none}
+.rl{font-size:13px;color:#aaa}.rv{font-size:14px;font-weight:700;font-family:monospace}
+.rv.g{color:#6DBF8A}.rv.gold{color:#C9A84C}.rv.r{color:#D9705F}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid #1a1a1a}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#777;font-weight:400}
+td.num{font-family:monospace}
+tr.ferma td{color:#777}
+.punch{font-size:14px;color:#F5F0E8;line-height:1.65}.punch b{color:#6DBF8A}.punch i{color:#D9705F;font-style:normal}
+.foot{font-size:11px;color:#555;padding:0 32px 34px;line-height:1.7}
+.presets{padding:12px 32px;border-bottom:1px solid #222;background:#0F0F0F;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.presets span{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px}
+button{background:#161616;border:1px solid #2a2a2a;color:#C9A84C;font-family:Georgia,serif;font-size:12px;padding:6px 12px;border-radius:5px;cursor:pointer}
+button:hover{border-color:#C9A84C}
+button:focus-visible{outline:2px solid #C9A84C;outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="eyebrow">AI Elite Advisory · strumento interno</div>
+  <h1>Simulatore Parco Clienti</h1>
+  <p>Quanti clienti hai davvero fra un anno, fra tre e fra cinque, dato il ritmo con cui li acquisisci e la velocità con cui se ne vanno. Muovi le leve e guarda dove si ferma il parco: a regime le acquisizioni non fanno crescita, fanno ricambio.</p>
+  <p class="warn">Numeri nostri, non del cliente. Non si mostra in call.</p>
+</div>
+
+<div class="presets">
+  <span>Scenari pronti</span>
+  <button data-p="oggi">Come siamo oggi</button>
+  <button data-p="dieci">Rampa fino a 10 al mese</button>
+  <button data-p="arpu1000">10 al mese + ARPU 1.000</button>
+  <button data-p="fase3">Quanto serve per 206 clienti</button>
+</div>
+
+<div class="ctrls" id="ctrls"></div>
+
+<div class="metrics">
+  <div class="metric"><label>Vita media cliente</label><div class="mv gold" id="m_vita">—</div><div class="ms" id="s_vita"></div></div>
+  <div class="metric"><label>Dove si ferma il parco</label><div class="mv green" id="m_plateau">—</div><div class="ms" id="s_plateau"></div></div>
+  <div class="metric"><label>MRR al plateau</label><div class="mv green" id="m_mrr">—</div><div class="ms" id="s_mrr"></div></div>
+  <div class="metric"><label>Acquisizioni per non scendere</label><div class="mv red" id="m_mant">—</div><div class="ms" id="s_mant"></div></div>
+</div>
+
+<div class="chart-area">
+  <h3>Parco clienti mese per mese</h3>
+  <div class="scroller"><svg id="g1" width="1040" height="340"></svg></div>
+  <div class="legend">
+    <span><i class="sw" style="background:#C9A84C"></i>Parco clienti</span>
+    <span><i class="sw" style="background:#6DBF8A"></i>Plateau, il tetto dove si ferma</span>
+    <span><i class="sw" style="background:#D9705F"></i>Tetto slot provinciali</span>
+  </div>
+</div>
+
+<div class="chart-area">
+  <h3>Entrano e escono, anno per anno</h3>
+  <div class="scroller"><svg id="g2" width="1040" height="270"></svg></div>
+  <div class="legend">
+    <span><i class="sw" style="background:#6DBF8A"></i>Contratti nuovi</span>
+    <span><i class="sw" style="background:#D9705F"></i>Clienti persi</span>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card big">
+    <div class="ct">Il verdetto</div>
+    <div class="punch" id="verdetto">—</div>
+  </div>
+  <div class="card">
+    <div class="ct">Quando arrivi a</div>
+    <div id="traguardi"></div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card" style="grid-column:1/-1">
+    <div class="ct">Anno per anno</div>
+    <div class="scroller"><table id="tab"></table></div>
+  </div>
+</div>
+
+<div class="foot">
+  Come si legge la vita media: un cliente esce solo alla scadenza, perche' il contratto e' prepagato e non si interrompe a meta'. Il valore canonico e' 15 mesi, e nasce dal churn del 30% a ogni scadenza su un ciclo medio di 4,5 mesi (mix 70/20/10). E' lo stesso numero dei 3,33 cicli della tab Unit Economics. Si usa 15 e basta: e' il valore piu' vicino alla realta' e non si spacchetta per durata di contratto.<br>
+  Il plateau è acquisizioni al mese moltiplicate per la vita media: è il punto in cui entrano tanti clienti quanti ne escono, e il parco smette di crescere qualunque cosa succeda dopo.<br>
+  Parametri canonici al 18/8/2026: vita media 15 mesi, tetto 10 acquisizioni al mese, ARPU 870, 5 clienti attivi. Fonte: Trimestrale, tab Previsionale 12M celle U21 e U34, e Lista Clienti Dashboard.
+</div>
+
+<script>
+const CTRL = [
+  {id:'start', lab:'Clienti di partenza',      min:0,  max:60,  step:1,   val:5,   fmt:v=>v},
+  {id:'acq0',  lab:'Acquisizioni al mese, ora',min:0,  max:25,  step:0.5, val:2,   fmt:v=>v.toLocaleString('it-IT')},
+  {id:'inc',   lab:'Crescita del ritmo',       min:0,  max:1,   step:0.1, val:0.5, fmt:v=>'+'+v.toLocaleString('it-IT')+' al mese', note:'quanto aumenta ogni mese il numero di contratti che chiudi'},
+  {id:'tetto', lab:'Tetto acquisizioni',       min:1,  max:30,  step:1,   val:10,  fmt:v=>v+' al mese', note:'oltre questo ritmo non si va'},
+  {id:'vita',  lab:'Vita media cliente',       min:6,  max:40,  step:0.5, val:15,  fmt:v=>v.toLocaleString('it-IT')+' mesi', note:'canonica 15 mesi: churn 30% a ogni scadenza su ciclo medio 4,5'},
+  {id:'arpu',  lab:'ARPU',                     min:500,max:1600,step:10,  val:870, fmt:v=>'€'+v.toLocaleString('it-IT')+'/mese'},
+  {id:'pen',   lab:'Backend: % del parco',    min:0,  max:60,  step:5,   val:20,  fmt:v=>v+'%', note:'quota di clienti che compra il Social Planner'},
+  {id:'pbe',   lab:'Backend: \u20ac/mese',          min:0,  max:1200,step:50,  val:600, fmt:v=>'\u20ac'+v.toLocaleString('it-IT'), note:'ciclo 3 mesi a 1.800 = 600/mese · margine 90%'},
+  {id:'slot',  lab:'Tetto slot',               min:0,  max:400, step:1,   val:214, fmt:v=>v===0?'nessuno':v+' clienti', note:'107 province per verticale · 0 per toglierlo'},
+  {id:'orizz', lab:'Orizzonte',                min:12, max:96,  step:6,   val:72,  fmt:v=>v+' mesi'}
+];
+
+const PRESET = {
+  oggi:    {start:5, acq0:2,  inc:0,   tetto:10, vita:15, arpu:870, pen:20, pbe:600,  slot:214, orizz:72},
+  dieci:   {start:5, acq0:2,  inc:0.5, tetto:10, vita:15, arpu:870, pen:20, pbe:600,  slot:214, orizz:72},
+  arpu1000: {start:5, acq0:2,  inc:0.5, tetto:10, vita:15, arpu:1000, pen:20, pbe:600, slot:214, orizz:72},
+  fase3:   {start:5, acq0:5,  inc:1,   tetto:24, vita:15, arpu:870, pen:20, pbe:600,  slot:214, orizz:72}
+};
+
+const MESI = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+const etich = i => { const t = 8 + i; return MESI[t % 12] + ' ' + (2026 + Math.floor(t / 12)); };
+const V = {};
+const eur = n => '€' + Math.round(n).toLocaleString('it-IT');
+
+const cont = document.getElementById('ctrls');
+cont.innerHTML = CTRL.map(c =>
+  `<div class="sl"><label for="${c.id}">${c.lab}</label>
+   <input type="range" id="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.val}">
+   <div class="sl-val" id="v_${c.id}"></div>${c.note ? `<small>${c.note}</small>` : ''}</div>`).join('');
+
+CTRL.forEach(c => {
+  const el = document.getElementById(c.id);
+  el.addEventListener('input', () => { V[c.id] = parseFloat(el.value); render(); });
+  V[c.id] = c.val;
+});
+
+document.querySelectorAll('.presets button').forEach(b => b.addEventListener('click', () => {
+  const p = PRESET[b.dataset.p];
+  Object.keys(p).forEach(k => { V[k] = p[k]; document.getElementById(k).value = p[k]; });
+  render();
+}));
+
+function calcola() {
+  // Un solo numero, deciso il 18/8/2026: la vita media del cliente e' 15 mesi.
+  // Nasce da churn 30% a ogni scadenza su un ciclo medio di 4,5 mesi (mix 70/20/10),
+  // ed e' lo stesso valore dei 3,33 cicli della tab Unit Economics.
+  const vita = V.vita;
+  const arpuEff = V.arpu + (V.pen/100)*V.pbe;   // Pack B + backend, come il Previsionale 12M
+  const sopr = 1 - 1 / vita;
+  const N = V.orizz;
+  const acqDi = m => Math.min(V.acq0 + V.inc * (m - 1), V.tetto);
+  const tetto = V.slot > 0 ? V.slot : Infinity;
+  let p = V.start;
+  const parco = [], uscite = [], entrate = [];
+  for (let m = 1; m <= N; m++) {
+    const u = p * (1 - sopr);
+    const e = acqDi(m);
+    p = Math.min(p - u + e, tetto);
+    parco.push(p); uscite.push(u); entrate.push(e);
+  }
+  const plateauTeorico = V.tetto * vita;
+  const plateau = Math.min(plateauTeorico, tetto);
+  const anni = [];
+  for (let a = 0; a * 12 < N; a++) {
+    const i0 = a * 12, i1 = Math.min(i0 + 12, N);
+    const ent = entrate.slice(i0, i1).reduce((s, x) => s + x, 0);
+    const usc = uscite.slice(i0, i1).reduce((s, x) => s + x, 0);
+    anni.push({ lab: etich(i0) + ' → ' + etich(i1 - 1), ent, usc, cre: ent - usc, fine: parco[i1 - 1] });
+  }
+  const quando = t => { const i = parco.findIndex(x => x >= t); return i < 0 ? null : i + 1; };
+  return { vita, sopr, arpuEff, parco, uscite, entrate, plateau, plateauTeorico, anni, quando, N };
+}
+
+function assiY(max) { const p = [1, 2, 5, 10, 20, 25, 50, 100]; const g = p.find(x => max / x <= 8) || 200; return { g, top: Math.ceil(max / g) * g }; }
+
+function grafico1(R) {
+  const W = 1040, H = 340, ml = 56, mr = 96, mt = 16, mb = 34;
+  const maxV = Math.max(...R.parco, R.plateau, V.slot > 0 ? V.slot : 0) * 1.08;
+  const { g, top } = assiY(maxV);
+  const x = i => ml + i * (W - ml - mr) / (R.N - 1);
+  const y = v => H - mb - (v / top) * (H - mt - mb);
+  let s = '';
+  for (let k = 0; k <= top; k += g) {
+    s += `<line x1="${ml}" y1="${y(k)}" x2="${W - mr}" y2="${y(k)}" stroke="#1c1c1c"/>`;
+    s += `<text x="${ml - 9}" y="${y(k) + 4}" text-anchor="end" font-size="11" fill="#666" font-family="monospace">${k}</text>`;
+  }
+  for (let i = 0; i < R.N; i++) {
+    const e = etich(i);
+    if (e.startsWith('gen') || i === 0) {
+      s += `<line x1="${x(i)}" y1="${mt}" x2="${x(i)}" y2="${H - mb}" stroke="#1c1c1c"/>`;
+      s += `<text x="${x(i)}" y="${H - mb + 18}" text-anchor="middle" font-size="11" fill="#666">${e}</text>`;
+    }
+  }
+  if (V.slot > 0 && V.slot <= top) {
+    s += `<line x1="${ml}" y1="${y(V.slot)}" x2="${W - mr}" y2="${y(V.slot)}" stroke="#D9705F" stroke-dasharray="2 5"/>`;
+    s += `<text x="${W - mr + 8}" y="${y(V.slot) + 4}" font-size="11" fill="#D9705F" font-family="monospace">slot ${V.slot}</text>`;
+  }
+  s += `<line x1="${ml}" y1="${y(R.plateau)}" x2="${W - mr}" y2="${y(R.plateau)}" stroke="#6DBF8A" stroke-dasharray="4 4" opacity=".8"/>`;
+  s += `<text x="${W - mr + 8}" y="${y(R.plateau) + 4}" font-size="11" fill="#6DBF8A" font-family="monospace">${Math.round(R.plateau)}</text>`;
+  const d = R.parco.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
+  s += `<path d="${d}" fill="none" stroke="#C9A84C" stroke-width="2.6" stroke-linejoin="round"/>`;
+  const last = R.parco[R.N - 1];
+  s += `<circle cx="${x(R.N - 1)}" cy="${y(last)}" r="4" fill="#C9A84C"/>`;
+  s += `<text x="${W - mr + 8}" y="${y(last) - 8}" font-size="12" fill="#C9A84C" font-family="monospace">${Math.round(last)}</text>`;
+  document.getElementById('g1').innerHTML = s;
+}
+
+function grafico2(R) {
+  const W = 1040, H = 270, ml = 56, mr = 20, mt = 16, mb = 46;
+  const A = R.anni, n = A.length;
+  const maxV = Math.max(...A.map(a => Math.max(a.ent, a.usc))) * 1.15 || 10;
+  const { g, top } = assiY(maxV);
+  const bw = (W - ml - mr) / n, y = v => H - mb - (v / top) * (H - mt - mb);
+  let s = '';
+  for (let k = 0; k <= top; k += g) {
+    s += `<line x1="${ml}" y1="${y(k)}" x2="${W - mr}" y2="${y(k)}" stroke="#1c1c1c"/>`;
+    s += `<text x="${ml - 9}" y="${y(k) + 4}" text-anchor="end" font-size="11" fill="#666" font-family="monospace">${k}</text>`;
+  }
+  A.forEach((a, i) => {
+    const cx = ml + i * bw + bw / 2, w = Math.min(30, bw / 3.2);
+    s += `<rect x="${cx - w - 3}" y="${y(a.ent)}" width="${w}" height="${H - mb - y(a.ent)}" fill="#6DBF8A" rx="1"/>`;
+    s += `<rect x="${cx + 3}" y="${y(a.usc)}" width="${w}" height="${H - mb - y(a.usc)}" fill="#D9705F" rx="1"/>`;
+    s += `<text x="${cx - w / 2 - 3}" y="${y(a.ent) - 6}" text-anchor="middle" font-size="11" fill="#6DBF8A" font-family="monospace">${Math.round(a.ent)}</text>`;
+    s += `<text x="${cx + w / 2 + 3}" y="${y(a.usc) - 6}" text-anchor="middle" font-size="11" fill="#D9705F" font-family="monospace">${Math.round(a.usc)}</text>`;
+    s += `<text x="${cx}" y="${H - mb + 18}" text-anchor="middle" font-size="11" fill="#888">anno ${i + 1}</text>`;
+    s += `<text x="${cx}" y="${H - mb + 34}" text-anchor="middle" font-size="12" fill="${a.cre > 0.5 ? '#F5F0E8' : '#777'}" font-family="monospace">${a.cre > 0 ? '+' : ''}${Math.round(a.cre)}</text>`;
+  });
+  document.getElementById('g2').innerHTML = s;
+}
+
+function render() {
+  CTRL.forEach(c => { document.getElementById('v_' + c.id).textContent = c.fmt(V[c.id]); });
+  const R = calcola();
+  const vitaTxt = R.vita.toFixed(1).replace('.', ',') + ' mesi';
+  document.getElementById('m_vita').textContent = vitaTxt;
+  document.getElementById('s_vita').textContent = 'ogni mese esce il ' + ((1 - R.sopr) * 100).toFixed(1).replace('.', ',') + '% del parco';
+
+  const bloccato = R.plateauTeorico > (V.slot > 0 ? V.slot : Infinity);
+  document.getElementById('m_plateau').textContent = Math.round(R.plateau) + ' clienti';
+  document.getElementById('s_plateau').textContent = bloccato
+    ? 'il ritmo darebbe ' + Math.round(R.plateauTeorico) + ', ma il tetto slot ferma prima'
+    : V.tetto + ' al mese × ' + vitaTxt;
+
+  document.getElementById('m_mrr').textContent = eur(R.plateau * R.arpuEff);
+  document.getElementById('s_mrr').textContent = 'ARPU effettivo ' + eur(R.arpuEff) + ' col backend · ' + eur(R.plateau * R.arpuEff * 12) + ' l’anno';
+
+  const mant = R.plateau / R.vita;
+  document.getElementById('m_mant').textContent = mant.toFixed(1).replace('.', ',') + ' al mese';
+  document.getElementById('s_mant').textContent = 'per tenere ' + Math.round(R.plateau) + ' clienti, per sempre';
+
+  grafico1(R); grafico2(R);
+
+  const fine = R.parco[R.N - 1];
+  const ultimo = R.anni[R.anni.length - 1];
+  const quota = ultimo.ent > 0 ? Math.round(ultimo.usc / ultimo.ent * 100) : 0;
+  document.getElementById('verdetto').innerHTML =
+    'A questo ritmo il parco arriva a <b>' + Math.round(fine) + ' clienti</b> in ' + V.orizz + ' mesi e si ferma intorno a <b>' + Math.round(R.plateau) + '</b>. ' +
+    'MRR a regime <b>' + eur(R.plateau * R.arpuEff) + '</b> al mese.<br><br>' +
+    'Nell’ultimo anno chiudi ' + Math.round(ultimo.ent) + ' contratti e ne perdi ' + Math.round(ultimo.usc) + ': <i>il ' + quota + '% del lavoro di vendita serve solo a rimpiazzare</i>. ' +
+    'La crescita netta dell’anno è di ' + Math.round(ultimo.cre) + ' clienti.';
+
+  const tg = [21, 35, 69, 96, 155, 206];
+  document.getElementById('traguardi').innerHTML = tg.map(t => {
+    const m = R.quando(t);
+    const raggiunto = m !== null;
+    const oltrePlateau = t > R.plateau;
+    return '<div class="row"><span class="rl">' + t + ' clienti · ' + eur(t * R.arpuEff) + ' di MRR</span>' +
+      '<span class="rv ' + (raggiunto ? 'g' : 'r') + '">' + (raggiunto ? etich(m - 1) : (oltrePlateau ? 'mai' : 'oltre l’orizzonte')) + '</span></div>';
+  }).join('');
+
+  let h = '<thead><tr><th>Periodo</th><th>Entrati</th><th>Usciti</th><th>Crescita</th><th>Parco a fine anno</th><th>MRR</th></tr></thead><tbody>';
+  R.anni.forEach(a => {
+    h += '<tr class="' + (a.cre < 2 ? 'ferma' : '') + '"><td>' + a.lab + '</td>' +
+      '<td class="num">' + Math.round(a.ent) + '</td><td class="num">' + Math.round(a.usc) + '</td>' +
+      '<td class="num">' + (a.cre > 0 ? '+' : '') + Math.round(a.cre) + '</td>' +
+      '<td class="num">' + Math.round(a.fine) + '</td><td class="num">' + eur(a.fine * R.arpuEff) + '</td></tr>';
+  });
+  document.getElementById('tab').innerHTML = h + '</tbody>';
+}
+
+render();
+</script>
+</body>
+</html>
