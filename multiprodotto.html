@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto vale la tua agenda — Multiprodotto</title>
+<style>
+  :root{
+    --bg: #eef0e8;
+    --surface: #ffffff;
+    --surface-2: #f4f5ee;
+    --hairline: #d7dac9;
+    --ink: #21241b;
+    --ink-dim: #6d715f;
+    --brass: #9c7a2e;
+    --brass-dim: #c2a35c;
+    --good: #2f6e4f;
+    --font-display: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    padding:48px 20px 100px;
+    line-height:1.5;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+  .top{
+    display:flex;align-items:center;gap:14px;margin-bottom:36px;
+    font-size:13px;color:var(--ink-dim);
+  }
+  .mark{
+    width:26px;height:26px;border-radius:50%;
+    background:conic-gradient(var(--brass) 0deg 140deg, transparent 140deg 360deg);
+    border:1px solid var(--hairline);
+    flex:none;
+  }
+  .top nav{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap;}
+  .top nav a{color:var(--ink-dim);text-decoration:none;border-bottom:1px solid transparent;}
+  .top nav a:hover{color:var(--brass);border-color:var(--brass);}
+
+  h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(28px,4vw,38px);
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
+  }
+  .sub{color:var(--ink-dim);font-size:15px;max-width:56ch;margin:0 0 40px;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:28px 26px;
+    margin-bottom:22px;
+  }
+  .card-title{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--brass);
+    margin:0 0 20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card-title::after{content:"";flex:1;height:1px;background:var(--hairline);}
+
+  .period{display:flex;gap:10px;margin-bottom:4px;}
+  .period button{
+    flex:1;
+    background:var(--surface-2);
+    border:1px solid var(--hairline);
+    color:var(--ink-dim);
+    font-family:var(--font-body);
+    font-size:14px;
+    padding:11px 8px;
+    cursor:pointer;
+    border-radius:2px;
+    transition:all .15s ease;
+  }
+  .period button .n{display:block;font-family:var(--font-display);font-size:20px;color:var(--ink);}
+  .period button.active{border-color:var(--brass);background:rgba(201,161,90,0.08);}
+  .period button.active .n{color:var(--brass);}
+
+  .field{margin:22px 0;}
+  .field-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;gap:12px;}
+  .field-label{font-size:14px;color:var(--ink);}
+  .field-hint{font-size:12px;color:var(--ink-dim);margin-top:2px;}
+  .field-value{
+    font-family:var(--font-mono);
+    font-size:16px;
+    color:var(--brass);
+    white-space:nowrap;
+  }
+  .field-value input{
+    background:none;border:none;color:var(--brass);
+    font-family:var(--font-mono);font-size:16px;
+    width:88px;text-align:right;
+    border-bottom:1px solid var(--brass-dim);
+    padding:0 0 2px;
+  }
+  .field-value input:focus{outline:none;border-color:var(--brass);}
+
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:2px;background:var(--hairline);
+    border-radius:0;margin-top:8px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;
+    background:var(--brass);border:2px solid var(--bg);
+    cursor:pointer;margin-top:-6px;
+    box-shadow:0 0 0 1px var(--brass-dim);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:14px;height:14px;border-radius:50%;
+    background:var(--brass);border:2px solid var(--bg);
+    cursor:pointer;box-shadow:0 0 0 1px var(--brass-dim);
+  }
+
+  .addon{
+    border:1px solid var(--hairline);
+    border-left:2px solid var(--brass-dim);
+    padding:20px 22px;
+    margin-bottom:16px;
+    background:var(--surface-2);
+    position:relative;
+  }
+  .addon-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .addon-head input.name{
+    background:none;border:none;color:var(--ink);
+    font-family:var(--font-display);font-size:18px;
+    border-bottom:1px solid transparent;padding:2px 0;flex:1;
+  }
+  .addon-head input.name:focus{outline:none;border-color:var(--brass-dim);}
+  .remove-btn{
+    background:none;border:1px solid var(--hairline);color:var(--ink-dim);
+    font-size:11px;font-family:var(--font-mono);
+    padding:5px 9px;cursor:pointer;border-radius:2px;
+  }
+  .remove-btn:hover{color:#c98a5a;border-color:#c98a5a;}
+
+  .addon-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;margin-top:14px;}
+  @media(max-width:520px){.addon-grid{grid-template-columns:1fr;}}
+
+  .presets{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .preset-btn, .add-btn{
+    background:none;border:1px dashed var(--hairline);
+    color:var(--ink-dim);font-family:var(--font-body);font-size:13px;
+    padding:9px 14px;cursor:pointer;border-radius:2px;
+    transition:all .15s ease;
+  }
+  .preset-btn:hover, .add-btn:hover{border-color:var(--brass);color:var(--brass);border-style:solid;}
+
+  .results{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:30px 26px;
+    margin-top:8px;
+  }
+  .rows{display:flex;flex-direction:column;}
+  .row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:13px 0;border-bottom:1px solid var(--hairline);
+    gap:16px;
+  }
+  .row:last-child{border-bottom:none;}
+  .row .lab{font-size:14px;color:var(--ink-dim);}
+  .row .lab small{display:block;font-size:11px;margin-top:2px;color:var(--ink-dim);opacity:.7;}
+  .row .val{font-family:var(--font-mono);font-size:18px;color:var(--ink);white-space:nowrap;}
+  .row.total .val{color:var(--brass);font-size:24px;}
+  .row.total .lab{color:var(--ink);font-weight:600;}
+  .row.recurring .val{color:var(--good);}
+
+  .breakdown{margin-bottom:8px;}
+  .product-block{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 14px;margin-bottom:6px;
+    background:var(--surface-2);border:1px solid var(--hairline);
+    border-radius:2px;
+  }
+  .product-block .pname{font-size:13px;color:var(--ink-dim);}
+  .product-block .pname b{color:var(--ink);font-weight:600;}
+  .product-block .pval{font-family:var(--font-mono);font-size:15px;color:var(--ink);}
+
+  .sum-line{
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;
+    font-family:var(--font-mono);font-size:14px;color:var(--ink-dim);
+    margin:14px 0 4px;padding-top:14px;border-top:1px dashed var(--hairline);
+  }
+  .sum-line .op{color:var(--brass-dim);font-size:14px;}
+  .sum-line .part{color:var(--ink);}
+  .sum-line .eq{color:var(--brass);font-weight:600;}
+
+  .metric-title{
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-dim);margin:26px 0 4px;
+  }
+  .metric-title:first-child{margin-top:0;}
+
+  .foot-note{font-size:12px;color:var(--ink-dim);margin-top:28px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="mark"></div>
+    <span>AI Elite Advisory · Simulatore</span>
+    <nav>
+      <a href="https://francescolabriola1011-star.github.io/ai-elite-tools/index.html">Simulatore del Gestito</a>
+      <a href="https://francescolabriola1011-star.github.io/ai-elite-tools/assicurativo.html">Simulatore PAC</a>
+    </nav>
+  </div>
+
+  <h1>Quanto vale la tua agenda</h1>
+  <p class="sub">TCM come prodotto base, più tutto quello che aggiungi allo stesso cliente — LTC, infortuni, invalidità permanente, malattie gravi, o un prodotto tuo. Ogni riga con la sua provvigione ricorrente, da 0 a 90%.</p>
+
+  <div class="card">
+    <p class="card-title">Su quanto tempo</p>
+    <div class="period" id="periodBtns">
+      <button data-months="3" class="active"><span class="n">3 mesi</span>un trimestre</button>
+      <button data-months="6"><span class="n">6 mesi</span>un semestre</button>
+      <button data-months="12"><span class="n">12 mesi</span>un anno pieno</button>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="field">
+      <div class="field-head">
+        <span class="field-label">Appuntamenti / mese</span>
+        <span class="field-value"><input type="number" id="appt" value="8" min="0" max="60"></span>
+      </div>
+      <div class="field-hint">Quelli che ti portiamo in agenda, garantiti.</div>
+      <input type="range" id="apptRange" min="0" max="60" value="8">
+    </div>
+
+    <div class="field">
+      <div class="field-head">
+        <span class="field-label">Chiusura (close rate)</span>
+        <span class="field-value"><input type="number" id="close" value="25" min="0" max="100">%</span>
+      </div>
+      <div class="field-hint">% di appuntamenti che sottoscrivono la TCM.</div>
+      <input type="range" id="closeRange" min="0" max="100" value="25">
+    </div>
+
+    <div class="field">
+      <div class="field-head">
+        <span class="field-label">Premio annuale TCM</span>
+        <span class="field-value">€ <input type="number" id="premio" value="600" min="0"></span>
+      </div>
+      <div class="field-hint">Premio medio annuo della polizza.</div>
+    </div>
+
+    <div class="field">
+      <div class="field-head">
+        <span class="field-label">Provvigione primo premio</span>
+        <span class="field-value"><input type="number" id="provPrimo" value="40" min="0" max="100">%</span>
+      </div>
+      <div class="field-hint">% del primo premio annuo, che incassi subito. Metti 0 se lavori senza anticipo.</div>
+      <input type="range" id="provPrimoRange" min="0" max="100" value="40">
+    </div>
+
+    <div class="field">
+      <div class="field-head">
+        <span class="field-label">Provvigione ricorrente</span>
+        <span class="field-value"><input type="number" id="provRic" value="15" min="0" max="90">%</span>
+      </div>
+      <div class="field-hint">% su ogni premio di rinnovo, finché la polizza resta in vita. Parametrabile 0–90%.</div>
+      <input type="range" id="provRicRange" min="0" max="90" value="15">
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Prodotti aggiuntivi sullo stesso cliente</p>
+    <div class="presets">
+      <button class="preset-btn" data-preset="LTC">+ LTC</button>
+      <button class="preset-btn" data-preset="Infortuni">+ Infortuni</button>
+      <button class="preset-btn" data-preset="Invalidità Permanente">+ Invalidità Permanente</button>
+      <button class="preset-btn" data-preset="Malattie Gravi">+ Malattie Gravi</button>
+      <button class="preset-btn" data-preset="">+ Prodotto personalizzato</button>
+    </div>
+    <div id="addonList"></div>
+  </div>
+
+  <div class="results">
+    <p class="card-title">Cosa esce</p>
+    <div class="rows" id="rows"></div>
+  </div>
+
+  <p class="foot-note">
+    Stima costruita sui tuoi numeri, non promessa di risultato. Ogni prodotto aggiuntivo si applica agli stessi nuovi clienti TCM del periodo — assumi di vendere LTC o infortuni a ogni cliente che sottoscrive la TCM. Per ogni metrica vedi il contributo di ciascun prodotto e la somma di tutti insieme, che è il totale reale della tua agenda.
+  </p>
+
+</div>
+
+<script>
+const state = {
+  months: 3,
+  appt: 8,
+  close: 25,
+  premio: 600,
+  provPrimo: 40,
+  provRic: 15,
+  addons: []
+};
+
+let addonId = 0;
+
+function fmtEUR(n){
+  return '€ ' + Math.round(n).toLocaleString('it-IT');
+}
+
+function syncPair(numId, rangeId, key, min, max){
+  const numEl = document.getElementById(numId);
+  const rangeEl = document.getElementById(rangeId);
+  numEl.addEventListener('input', () => {
+    let v = parseFloat(numEl.value) || 0;
+    v = Math.max(min, Math.min(max, v));
+    state[key] = v;
+    if(rangeEl) rangeEl.value = v;
+    render();
+  });
+  if(rangeEl){
+    rangeEl.addEventListener('input', () => {
+      state[key] = parseFloat(rangeEl.value);
+      numEl.value = rangeEl.value;
+      render();
+    });
+  }
+}
+
+syncPair('appt','apptRange','appt',0,60);
+syncPair('close','closeRange','close',0,100);
+syncPair('premio', null, 'premio', 0, 999999);
+syncPair('provPrimo','provPrimoRange','provPrimo',0,100);
+syncPair('provRic','provRicRange','provRic',0,90);
+
+document.getElementById('periodBtns').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  document.querySelectorAll('#periodBtns button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.months = parseInt(btn.dataset.months);
+  render();
+});
+
+function premioDefault(name){
+  switch(name){
+    case 'LTC': return 900;
+    case 'Infortuni': return 250;
+    case 'Invalidità Permanente': return 350;
+    case 'Malattie Gravi': return 400;
+    default: return 400;
+  }
+}
+
+function addAddon(name){
+  const id = 'a' + (addonId++);
+  state.addons.push({
+    id, name: name || 'Nuovo prodotto',
+    attach: 100,
+    premio: premioDefault(name),
+    provPrimo: 30, provRic: 15
+  });
+  renderAddons();
+  render();
+}
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => addAddon(btn.dataset.preset));
+});
+
+function renderAddons(){
+  const list = document.getElementById('addonList');
+  list.innerHTML = '';
+  state.addons.forEach(a => {
+    const div = document.createElement('div');
+    div.className = 'addon';
+    div.innerHTML = `
+      <div class="addon-head">
+        <input class="name" value="${a.name}" data-id="${a.id}" data-field="name">
+        <button class="remove-btn" data-id="${a.id}">rimuovi</button>
+      </div>
+      <div class="addon-grid">
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">% clienti a cui la aggiungi</span>
+            <span class="field-value"><input type="number" data-id="${a.id}" data-field="attach" value="${a.attach}" min="0" max="100">%</span>
+          </div>
+          <div class="field-hint">100% = a tutti i nuovi clienti TCM.</div>
+          <input type="range" data-id="${a.id}" data-field="attach" data-kind="range" min="0" max="100" value="${a.attach}">
+        </div>
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Premio medio annuo</span>
+            <span class="field-value">€ <input type="number" data-id="${a.id}" data-field="premio" value="${a.premio}" min="0"></span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Provvigione primo anno</span>
+            <span class="field-value"><input type="number" data-id="${a.id}" data-field="provPrimo" value="${a.provPrimo}" min="0" max="100">%</span>
+          </div>
+          <input type="range" data-id="${a.id}" data-field="provPrimo" data-kind="range" min="0" max="100" value="${a.provPrimo}">
+        </div>
+        <div class="field">
+          <div class="field-head">
+            <span class="field-label">Provvigione ricorrente</span>
+            <span class="field-value"><input type="number" data-id="${a.id}" data-field="provRic" value="${a.provRic}" min="0" max="90">%</span>
+          </div>
+          <input type="range" data-id="${a.id}" data-field="provRic" data-kind="range" min="0" max="90" value="${a.provRic}">
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+
+  list.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const id = inp.dataset.id;
+      const field = inp.dataset.field;
+      const addon = state.addons.find(x => x.id === id);
+      if(!addon) return;
+      if(field === 'name'){
+        addon.name = inp.value;
+      } else {
+        let v = parseFloat(inp.value) || 0;
+        addon[field] = v;
+        const pair = list.querySelector(`[data-id="${id}"][data-field="${field}"]${inp.dataset.kind === 'range' ? ':not([data-kind])' : '[data-kind="range"]'}`);
+        if(pair) pair.value = v;
+      }
+      render();
+    });
+  });
+
+  list.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.addons = state.addons.filter(a => a.id !== btn.dataset.id);
+      renderAddons();
+      render();
+    });
+  });
+}
+
+function render(){
+  const monthsFactor = state.months;
+  const newClientsTCM = state.appt * monthsFactor * (state.close / 100);
+
+  // build one entry per product (TCM + ogni addon), tutti sugli stessi nuovi clienti
+  const products = [];
+  products.push({
+    name: 'TCM',
+    clienti: newClientsTCM,
+    portafoglio: newClientsTCM * state.premio,
+    incassoPeriodo: newClientsTCM * state.premio * (state.provPrimo / 100),
+    ricorrenteAnno: newClientsTCM * state.premio * (state.provRic / 100)
+  });
+  state.addons.forEach(a => {
+    const clienti = newClientsTCM * (a.attach / 100);
+    products.push({
+      name: a.name || 'Prodotto',
+      clienti: clienti,
+      portafoglio: clienti * a.premio,
+      incassoPeriodo: clienti * a.premio * (a.provPrimo / 100),
+      ricorrenteAnno: clienti * a.premio * (a.provRic / 100)
+    });
+  });
+
+  const totPortafoglio = products.reduce((s,p) => s + p.portafoglio, 0);
+  const totIncassoPeriodo = products.reduce((s,p) => s + p.incassoPeriodo, 0);
+  const totRicorrenteAnno = products.reduce((s,p) => s + p.ricorrenteAnno, 0);
+
+  const sumLine = (key) => {
+    const parts = products.map(p => `<span class="part">${fmtEUR(p[key])}</span> <span class="pname" style="font-size:11px">(${p.name})</span>`);
+    return `<div class="sum-line">${parts.join(' <span class="op">+</span> ')} <span class="op">=</span></div>`;
+  };
+
+  const clientRows = state.addons.map((a, i) => {
+    const p = products[i + 1];
+    return `<div class="row"><span class="lab">Clienti con ${a.name || 'prodotto'}<small>${a.attach}% dei nuovi clienti TCM</small></span><span class="val">${Math.round(p.clienti).toLocaleString('it-IT')}</span></div>`;
+  }).join('');
+
+  const rowsEl = document.getElementById('rows');
+  rowsEl.innerHTML = `
+    <div class="row">
+      <span class="lab">Nuovi clienti TCM<small>nel periodo (${monthsFactor} mesi)</small></span>
+      <span class="val">${Math.round(newClientsTCM).toLocaleString('it-IT')}</span>
+    </div>
+    ${clientRows}
+
+    <p class="metric-title">Premi in portafoglio — per prodotto, poi somma</p>
+    ${sumLine('portafoglio')}
+    <div class="row total"><span class="lab">Totale premi in portafoglio</span><span class="val">${fmtEUR(totPortafoglio)}</span></div>
+
+    <p class="metric-title">Quanto incassi nel periodo — per prodotto, poi somma</p>
+    ${sumLine('incassoPeriodo')}
+    <div class="row total"><span class="lab">Totale incassato nel periodo</span><span class="val">${fmtEUR(totIncassoPeriodo)}</span></div>
+
+    <p class="metric-title">Quanto incassi l'anno dopo, senza acquisire nessuno — per prodotto, poi somma</p>
+    ${sumLine('ricorrenteAnno')}
+    <div class="row total recurring"><span class="lab">Totale ricorrente anno dopo</span><span class="val">${fmtEUR(totRicorrenteAnno)}</span></div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>
