@@ -228,9 +228,9 @@
   <div class="card">
     <p class="card-title">Su quanto tempo</p>
     <div class="period" id="periodBtns">
-      <button data-months="3" class="active"><span class="n">3 mesi</span>un trimestre</button>
+      <button data-months="3"><span class="n">3 mesi</span>un trimestre</button>
       <button data-months="6"><span class="n">6 mesi</span>un semestre</button>
-      <button data-months="12"><span class="n">12 mesi</span>un anno pieno</button>
+      <button data-months="12" class="active"><span class="n">12 mesi</span>un anno pieno</button>
     </div>
   </div>
 
@@ -239,25 +239,25 @@
     <div class="field">
       <div class="field-head">
         <span class="field-label">Appuntamenti / mese</span>
-        <span class="field-value"><input type="number" id="appt" value="8" min="0" max="60"></span>
+        <span class="field-value"><input type="number" id="appt" value="10" min="0" max="60"></span>
       </div>
       <div class="field-hint">Quelli che ti portiamo in agenda, garantiti.</div>
-      <input type="range" id="apptRange" min="0" max="60" value="8">
+      <input type="range" id="apptRange" min="0" max="60" value="10">
     </div>
 
     <div class="field">
       <div class="field-head">
         <span class="field-label">Chiusura (close rate)</span>
-        <span class="field-value"><input type="number" id="close" value="25" min="0" max="100">%</span>
+        <span class="field-value"><input type="number" id="close" value="40" min="0" max="100">%</span>
       </div>
       <div class="field-hint">% di appuntamenti che sottoscrivono la TCM.</div>
-      <input type="range" id="closeRange" min="0" max="100" value="25">
+      <input type="range" id="closeRange" min="0" max="100" value="40">
     </div>
 
     <div class="field">
       <div class="field-head">
         <span class="field-label">Premio annuale TCM</span>
-        <span class="field-value">€ <input type="number" id="premio" value="600" min="0"></span>
+        <span class="field-value">€ <input type="number" id="premio" value="500" min="0"></span>
       </div>
       <div class="field-hint">Premio medio annuo della polizza.</div>
     </div>
@@ -265,10 +265,10 @@
     <div class="field">
       <div class="field-head">
         <span class="field-label">Provvigione primo premio</span>
-        <span class="field-value"><input type="number" id="provPrimo" value="40" min="0" max="100">%</span>
+        <span class="field-value"><input type="number" id="provPrimo" value="25" min="0" max="100">%</span>
       </div>
       <div class="field-hint">% del primo premio annuo, che incassi subito. Metti 0 se lavori senza anticipo.</div>
-      <input type="range" id="provPrimoRange" min="0" max="100" value="40">
+      <input type="range" id="provPrimoRange" min="0" max="100" value="25">
     </div>
 
     <div class="field">
@@ -283,12 +283,14 @@
 
   <div class="card">
     <p class="card-title">Prodotti aggiuntivi sullo stesso cliente</p>
+    <p class="sub" style="margin:-6px 0 14px">In call la riga delle referenze si mette sempre al 100%: in media ogni cliente ne porta almeno una, e chi arriva per referenza compra il pacchetto completo, quindi il premio si valorizza 1.500 e non 800. Gli appuntamenti restano quelli che portiamo davvero: il numero si alza dalle referenze, mai gonfiando l'agenda.</p>
     <div class="presets">
       <button class="preset-btn" data-preset="LTC">+ LTC</button>
       <button class="preset-btn" data-preset="Infortuni">+ Infortuni</button>
       <button class="preset-btn" data-preset="Invalidità Permanente">+ Invalidità Permanente</button>
       <button class="preset-btn" data-preset="Malattie Gravi">+ Malattie Gravi</button>
       <button class="preset-btn" data-preset="">+ Prodotto personalizzato</button>
+      <button class="preset-btn" data-preset="Referenza">+ Referenza (1 per cliente)</button>
     </div>
     <div id="addonList"></div>
   </div>
@@ -306,11 +308,11 @@
 
 <script>
 const state = {
-  months: 3,
-  appt: 8,
-  close: 25,
-  premio: 600,
-  provPrimo: 40,
+  months: 12,
+  appt: 10,
+  close: 40,
+  premio: 500,
+  provPrimo: 25,
   provRic: 15,
   addons: []
 };
@@ -357,11 +359,21 @@ document.getElementById('periodBtns').addEventListener('click', (e) => {
 
 function premioDefault(name){
   switch(name){
-    case 'LTC': return 900;
-    case 'Infortuni': return 250;
+    case 'LTC': return 800;
+    case 'Infortuni': return 300;
+    case 'Referenza': return 1500;
     case 'Invalidità Permanente': return 350;
     case 'Malattie Gravi': return 400;
     default: return 400;
+  }
+}
+
+function attachDefault(name){
+  switch(name){
+    case 'LTC': return 50;
+    case 'Infortuni': return 30;
+    case 'Referenza': return 100;
+    default: return 100;
   }
 }
 
@@ -369,9 +381,9 @@ function addAddon(name){
   const id = 'a' + (addonId++);
   state.addons.push({
     id, name: name || 'Nuovo prodotto',
-    attach: 100,
+    attach: attachDefault(name),
     premio: premioDefault(name),
-    provPrimo: 30, provRic: 15
+    provPrimo: 25, provRic: 15
   });
   renderAddons();
   render();
