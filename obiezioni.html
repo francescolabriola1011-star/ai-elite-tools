@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banca Obiezioni — AI Elite</title>
+<style>
+  :root{
+    --bg:#eef0e8; --surface:#ffffff; --surface-2:#f4f5ee; --hairline:#d7dac9;
+    --ink:#21241b; --ink-dim:#6d715f; --brass:#9c7a2e; --brass-dim:#c2a35c;
+    --good:#2f6e4f; --bad:#9a3b2f;
+    --font-display:'Source Serif 4','Iowan Old Style',Georgia,serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);
+       padding:28px 16px 90px;line-height:1.55;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:780px;margin:0 auto;}
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:20px;font-size:13px;color:var(--ink-dim);}
+  .mark{width:24px;height:24px;border-radius:50%;flex:none;border:1px solid var(--hairline);
+        background:conic-gradient(var(--brass) 0deg 140deg,transparent 140deg 360deg);}
+  h1{font-family:var(--font-display);font-size:30px;line-height:1.15;margin:0 0 6px;font-weight:600;}
+  .sub{color:var(--ink-dim);font-size:14px;margin:0 0 22px;}
+  .sticky{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 12px;
+          border-bottom:1px solid var(--hairline);margin-bottom:18px;}
+  .tabs{display:flex;gap:8px;margin-bottom:10px;}
+  .tab{flex:1;padding:11px 8px;border:1px solid var(--hairline);background:var(--surface);
+       border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-dim);cursor:pointer;
+       text-align:center;font-family:inherit;}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+  input[type=search]{width:100%;padding:12px 14px;border:1px solid var(--hairline);border-radius:10px;
+       font-size:16px;font-family:inherit;background:var(--surface);color:var(--ink);}
+  .rules{background:var(--surface-2);border:1px solid var(--hairline);border-radius:12px;
+         padding:16px 18px;margin-bottom:22px;}
+  .rules h2{font-family:var(--font-display);font-size:17px;margin:0 0 10px;}
+  .rules ol{margin:0;padding-left:20px;font-size:14.5px;}
+  .rules li{margin-bottom:7px;}
+  details{background:var(--surface);border:1px solid var(--hairline);border-radius:12px;
+          margin-bottom:10px;overflow:hidden;}
+  details[open]{border-color:var(--brass-dim);}
+  summary{padding:15px 16px;cursor:pointer;font-weight:600;font-size:15.5px;list-style:none;
+          display:flex;gap:10px;align-items:flex-start;}
+  summary::-webkit-details-marker{display:none;}
+  .num{font-family:var(--font-display);color:var(--brass);font-size:15px;flex:none;min-width:20px;}
+  .body{padding:0 16px 18px;font-size:15px;}
+  .lab{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-dim);
+       margin:14px 0 5px;font-weight:700;}
+  .lab.bad{color:var(--bad);} .lab.good{color:var(--good);}
+  .say{background:var(--surface-2);border-left:3px solid var(--brass);border-radius:0 8px 8px 0;
+       padding:12px 14px;font-family:var(--font-display);font-size:15.5px;}
+  .say + .say{margin-top:8px;}
+  .move{font-size:14px;color:var(--ink-dim);border-top:1px solid var(--hairline);
+        padding-top:10px;margin-top:14px;}
+  .hidden{display:none !important;}
+  .empty{text-align:center;color:var(--ink-dim);padding:40px 0;font-size:15px;}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--hairline);
+         font-size:13px;color:var(--ink-dim);}
+  footer a{color:var(--brass);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top"><span class="mark"></span><span>AI ELITE ADVISORY · uso interno vendita</span></div>
+  <h1>Banca obiezioni</h1>
+  <p class="sub">Si valida, si isola, si riporta al pain. Mai difendersi, mai scontare.</p>
+
+  <div class="sticky">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-v="cf">Consulente finanziario</button>
+      <button class="tab" role="tab" aria-selected="false" data-v="as">Assicurativo</button>
+    </div>
+    <input type="search" id="q" placeholder="Cerca: prezzo, avvocato, da solo, percentuale…" autocomplete="off">
+  </div>
+
+  <div class="rules">
+    <h2>Le 4 regole, prima di ogni risposta</h2>
+    <ol>
+      <li>Valida sempre prima ("capisco", "ci sta"), poi reframe. Mai difenderti.</li>
+      <li>Prezzo e dubbi si riportano al pain o al numero del simulatore, mai alle garanzie.</li>
+      <li>Una obiezione alla volta: rispondi, poi "c'è dell'altro?". Così la isoli e la blocchi.</li>
+      <li>In call 1 non aprire tutto il ragionamento. Gestisci, rassicura, porta alla call 2. Il pesante si fa dopo, altrimenti non si presenta.</li>
+    </ol>
+    <p style="font-size:14.5px;margin:12px 0 0;">Le storie clienti, anche piccole (un appuntamento fissato, una prima chiamata andata bene), si seminano <strong>prima</strong> che arrivi l'obiezione, dentro la call 2. Si dice la cosa giusta al momento giusto, non tutto quello che si sa.</p>
+  </div>
+
+  <div id="list"></div>
+  <p class="empty hidden" id="empty">Nessuna obiezione con questa parola.</p>
+
+  <footer>
+    Fonte: doc "GESTIONE OBIEZIONI CF" e "GESTIONE OBIEZIONI — Assicurativo / Previdenziale", più il role play della riunione vendita del 31/8/2026.<br>
+    Simulatore da mostrare in terza call: <a href="https://francescolabriola1011-star.github.io/ai-elite-tools/multiprodotto.html">multiprodotto</a>.
+  </footer>
+</div>
+
+<script>
+const DATA = [
+/* ============ TRASVERSALI ============ */
+{v:["cf","as"],t:"Prezzo: costa troppo, non so se vale",
+ trap:"Scontare, o saltare sulle garanzie.",
+ say:[
+  {k:"cf",x:"Capisco [NOME]. Sono sicuramente tanti soldi, quello che ti chiedo: quanto vorresti aggiungere di gestito nei prossimi 12 mesi? […lascialo arrivare a una cifra]. Ok, quindi parliamo di [X] ricorrenti. Ipotizziamo che per tirarne fuori 4 o 5.000 ricorrenti per i prossimi 5 anni, quindi 25.000, ne investi 3.000. Quindi la domanda non è 'costa troppo', è: sei disposto a investirne 3.000 per costruire un sistema che te ne riporta 25.000 e poi continua a lavorare per te? Perché l'alternativa, te lo dico col rispetto, è restare fermo dove sei adesso."},
+  {k:"as",x:"Capisco [NOME], sono soldi veri. Ti chiedo una cosa: quanti clienti nuovi vorresti aggiungere nei prossimi dodici mesi? […lascialo arrivare a un numero]. Bene, quindi parliamo di [X] premi ricorrenti, e quei premi continuano a versare anche l'anno dopo, e quello dopo ancora. Guarda il numero uscito nel simulatore coi tuoi dati: [cifra]. Quindi la domanda non è se costa troppo, è se ci arrivi. Se ci arrivi si ripaga da solo. Se non ci credi, non ha senso partire e te lo dico io per primo."}],
+ move:"Pain, ritorno, future pacing. Lo porti a confrontare l'investimento col costo di restare fermo. Mai scontare: semmai si accorcia il periodo."},
+
+{v:["cf","as"],t:"Devo parlarne col socio (o con la mandataria)",
+ trap:"Continuare a vendere a lui e lasciarlo fare il venditore al posto tuo. Lì la perdi.",
+ say:[
+  {k:"",x:"Perfetto [NOME], anzi è giusto che ci sia anche [socio]. Quello che costruiamo tocca tutta la struttura, quindi ha senso che lo veda in prima persona e possa fare domande dirette, così non devi essere tu a rispiegare tutto e perdere dei pezzi. Quando riuscite a esserci tutti e due? Ti propongo [giorno] alle [ora]."},
+  {k:"as",x:"Se il freno è la compliance della mandataria: verifichiamolo, non tiriamo a indovinare. Di solito il paletto riguarda cosa si scrive sui prodotti, non il fatto che tu ti faccia conoscere. Chiedi cosa è consentito e mandami la risposta, se serve adattiamo i materiali. Nel frattempo, se te lo permettessero, la faresti questa cosa?"}],
+ move:"Porta il co-decisore in call, e trasforma la compliance in una verifica con una data."},
+
+{v:["cf","as"],t:"Non mi fido, fatemi vedere risultati",
+ trap:"Metterti sulla difensiva e scaricargli prove a raffica.",
+ say:[
+  {k:"cf",x:"Capisco lo scetticismo [NOME], ci sta, anzi sarebbe strano il contrario, oggi promettono tutti tutto. Siamo sul mercato da oltre un anno, Francesco è nel marketing da 6, e il team ha seguito oltre 200 clienti nel corso della carriera. Ma non ti chiedo di fidarti oggi: la fiducia te la guadagniamo nel tempo, coi risultati, e te li faccio vedere aprendo dashboard e creative dei nostri clienti. Oggi ti chiedo solo di guardare nel dettaglio come funziona e decidere coi numeri davanti, non sulla fiducia. Ti va?"},
+  {k:"as",x:"Capisco lo scetticismo [NOME], ci sta, oggi promettono tutti tutto. Non ti chiedo di fidarti a parole: ti apro il gestionale e ti faccio vedere dove finisce il lavoro, ti metto i tuoi numeri nel simulatore, e ti lascio tre consulenti che seguiamo così senti da loro com'è andata. Il discorso è che non ti fidi, quindi una volta che vedi i numeri sei convinto e partiamo, oppure c'è dell'altro?"},
+  {k:"",x:"VARIANTE, se lo scetticismo è sul perché lavoriamo così: guarda [NOME], pensa al tuo stesso modello. Se tu non avessi clienti ricorrenti, dovresti correre ogni mese a cercarne di nuovi solo per stare fermo, e a lungo ti si svuota il portafoglio più in fretta di quanto lo riempi. Per noi è identico: se non ti porto risultati veri te ne vai, e a me restano i costi vivi sostenuti da subito senza un cliente. Quindi non ti sto chiedendo dei soldi e via: ho tutto l'interesse che tu resti anni, non un mese."}],
+ move:"Valida lo scetticismo, non combatterlo, e abbassa la richiesta: non 'fidati', ma 'guarda i numeri'."},
+
+{v:["cf","as"],t:"Lo faccio da solo, internalizzo",
+ trap:"Elencare le tue competenze. Serve fargli contare il costo del suo tempo.",
+ say:[
+  {k:"cf",x:"Certo che puoi [NOME], nessuno te lo vieta. Ma mettiamole in fila: dovresti imparare le ads, montare il CRM, le automazioni, scrivere i copy, gestire e ottimizzare le campagne… e nel mentre chi segue i tuoi clienti? Il tuo tempo vale di più speso coi clienti che a fare il media buyer. Noi ti diamo il sistema già montato e collaudato, tu fai quello che sai fare meglio: chiudere. Quanto vale un'ora del tuo tempo?"},
+  {k:"as",x:"Certo che puoi [NOME]. Ma mettiamole in fila: imparare le ads, montare il gestionale, scrivere i messaggi, richiamare i contatti nei primi minuti, e tutto questo mentre fai il tuo lavoro vero, che è vendere. I contenuti poi portano volume e gente che non apre niente: per farti sedere davanti qualcuno che vuole davvero aprire un piano serve un metodo mirato, è un altro gioco. Quanto ti è costato in tempo l'ultima volta che ci hai provato, e quanti appuntamenti ne sono usciti?"}],
+ move:"Costo del fai da te più costo opportunità. Fagli dire il numero."},
+
+{v:["cf","as"],t:"Fammi pensare, ti richiamo io",
+ trap:"'Ok, aspetto tue notizie'. Uguale a lead morto.",
+ say:[
+  {k:"",x:"Ci sta [NOME]. Di solito quando uno dice 'ci penso' è per una di due cose: o non è il momento, o c'è già qualcosa che non gli torna. Quale delle due? Così ne parliamo adesso, invece di lasciarti con un dubbio in testa. […] E dimmi anche cosa cambia tra un mese: se cambia qualcosa di preciso ti richiamo volentieri e me lo segno. Se non cambia niente, tra un mese siamo qui a fare lo stesso discorso con un mese di clienti in meno."}],
+ move:"Isola il freno vero adesso, e non chiudere la call senza una data in agenda."},
+
+{v:["cf","as"],t:"Voglio pagare a percentuale sui clienti chiusi",
+ trap:"Discutere la percentuale. Il punto è il rischio, non la cifra.",
+ say:[
+  {k:"",x:"Capisco [NOME], vuoi legare il costo ai risultati, è legittimo. Chi ti promette di lavorare solo a percentuale, a lungo andare rende poco motivante per te dividere i guadagni, perché si prende una grossa fetta del tuo fatturato. Te lo dico onesto: capisco lo scetticismo iniziale, non sai se guadagnerai e questo ti porta a chiedere così. Lavoriamo a fisso perché costruiamo un asset che resta tuo, e investiamo tempo e risorse da subito, prima ancora che tu veda il primo cliente. Quello che non facciamo è lavorare solo a percentuale, perché significherebbe prenderci tutto il rischio su un'attività che dipende anche da come gestisci tu i lead. Ti mostro il modello e vedi se ha senso?"},
+  {k:"",x:"Da aggiungere, onestamente: chi lavora solo a percentuale o promette rimborsi è spesso un campanello d'allarme, perché o non ha le competenze per farsi pagare il servizio e allora spera nei risultati altrui, o c'è dell'altro che non torna. Noi lavoriamo dal giorno zero con costi vivi, sostenuti prima ancora che tu veda un euro. Chi vuole un servizio di qualità paga per averlo, non aspetta di vedere se funziona."}],
+ move:"Non difendere il prezzo: sposta il discorso su chi si prende il rischio e perché."},
+
+/* ============ SOLO CF ============ */
+{v:["cf"],t:"Se in un mese non ottengo risultati mi demoralizzo, posso disdire?",
+ trap:"Rassicurare con le garanzie ('tranquillo, in un mese vedrai').",
+ say:[
+  {k:"",x:"Guarda [NOME], te lo dico onesto: se l'aspettativa è risultati in un mese o ti demoralizzi, con queste premesse non posso aiutarti, e non voglio prenderti i soldi per poi deluderti. Se esistesse un metodo facile e veloce lo userei io per primo. Quello che costruiamo è un sistema che a regime ti porta clienti in modo prevedibile, ma ha bisogno di qualche settimana per girare. Se sei disposto a darmi 90 giorni e a fidarti del processo, funziona. Te la senti?"}],
+ move:"Il takeaway, cioè quasi squalificarlo, alza la soglia del dolore e filtra l'impaziente. Riporti l'orizzonte a 90 giorni."},
+
+{v:["cf"],t:"Voglio pagarvi ad appuntamento",
+ trap:"Confonderla con il 'voglio fare a percentuale'. Qui il modello è il costo per appuntamento.",
+ say:[
+  {k:"",x:"Capisco [NOME], e da dove nasce la domanda lo capisco bene: probabilmente ti hanno già promesso tanto e portato poco. Ti do aspettative concrete: se ti aspetti di valutare il lavoro di un'agenzia dai primi appuntamenti e in pochi giorni, non vorrei rimanessi deluso. Con noi in 7 giorni sei attivo, dalla seconda settimana arrivano i primi appuntamenti. Ma il nostro lavoro lo valuti sui 3-6 mesi, non in due settimane: in due settimane non abbiamo ancora raggiunto neanche mille persone con le ads. Serve commitment e una visione di medio termine, è lì che i risultati arrivano davvero."}],
+ move:"Chiudi su aspettative realistiche e commitment 3-6 mesi, non su valutazione a due settimane."},
+
+{v:["cf"],t:"Il mio settore è regolamentato, non posso fare pubblicità",
+ trap:"Liquidarla. È una domanda legittima e la conosciamo bene.",
+ say:[
+  {k:"",x:"Giusto chiederlo [NOME], siete tutti nella stessa situazione e infatti la conosciamo bene. Noi non promuoviamo la tua mandante né promettiamo rendimenti: promuoviamo TE come professionista, sei iscritto OCF e presentarti è un tuo diritto, e sei TU ad approvare tutto ciò che esce, niente va online senza il tuo ok. Cosa ti preoccupa di preciso: l'esposizione del marchio o le promesse di rendimento? Così ti mostro nel concreto come lo gestiamo."}],
+ move:"Trasforma il timore in una domanda chiusa, così scegli tu quale dei due rispondere."},
+
+{v:["cf"],t:"È troppo (e va abbassato qualcosa)",
+ trap:"Togliere pezzi di servizio per far scendere il prezzo. Non si fa mai.",
+ say:[
+  {k:"",x:"Ragioniamo coi numeri [NOME]: 6 appuntamenti al mese, 2 con oltre 100k di patrimonio. Se in un mese ne chiudi 3, uno da 100k che ti vale circa 1.000 euro e due da circa 400, hai incassato 1.800 euro contro gli 800 al mese che paghi. E più sali, più il rapporto migliora, perché il costo resta quello."},
+  {k:"",x:"Se il problema è davvero il budget e non il valore, non ti tolgo niente dal servizio: cambiamo la durata. Il semestrale è 4.800, cioè 800 al mese; il trimestrale è 2.700, cioè 900 al mese, meno soldi subito ma ti costa di più al mese. Partiamo da tre mesi, vedi i numeri girare, e al rinnovo scegli tu se allungare. Come preferisci procedere?"}],
+ move:"Il servizio è uno solo: si muove la durata, mai il contenuto."},
+
+{v:["cf"],t:"Non mi fido che si trovino investitori da +100k online",
+ trap:"Difendere i lead. Meglio dargli ragione sul fatto che la maggior parte delle ads porta curiosi.",
+ say:[
+  {k:"",x:"Fai benissimo a essere scettico, la verità è che la maggior parte delle ads porta curiosi, e su quello hai ragione. Ma il punto non è trovare ricchi che cliccano una pubblicità, il punto è due cose. Primo: abbiamo un filtro automatico che scarta da solo chi non ha budget e patrimonio, i curiosi e i piccoli si fermano prima ancora di arrivare a te, a te passa solo chi è in target. Secondo: noi lavoriamo sui numeri, non sulle speranze. Su 100 contatti non ne chiudiamo 100, è ovvio, ma a noi e a te basta il 5% per essere già largamente in profitto, e quel 5% sono persone in target. In più non ti mandiamo lead e basta: ti costruiamo l'autorità online, così sono i patrimonializzati ad alzare la mano verso di te. Quindi la domanda vera non è 'funziona?', è: se ti porto anche solo 2-3 clienti giusti al mese, a te conviene?"}],
+ move:"Dagli ragione sulla premessa, poi sposta su filtro e numeri, e chiudi con una domanda che vale sì."},
+
+{v:["cf"],t:"Voglio vedere testimonianze ma non trovo i profili Instagram",
+ trap:"Mandargli profili a caso: si fa un'idea sbagliata del nostro lavoro.",
+ say:[
+  {k:"",x:"Ti capisco [NOME], è giusto voler vedere delle prove. Guarda, se vuoi ti mando qualche profilo. Ma ti avviso subito, perché voglio essere onesto con te: noi lavoriamo con le sponsorizzazioni, non coi contenuti organici sul profilo, quindi da lì si capisce poco del nostro lavoro, e rischi di farti un'idea fuorviante. Il modo giusto per valutarci è guardare i risultati reali: ti apro le dashboard e le creative dei nostri clienti, e decidi coi numeri davanti."}],
+ move:"Sii onesto sul perché i profili non dicono nulla, e sposta la prova sui numeri."},
+
+/* ============ SOLO ASSICURATIVO ============ */
+{v:["as"],t:"Non ho tempo per seguire i clienti che mi portate",
+ trap:"Ridurre la garanzia pur di chiudere.",
+ say:[
+  {k:"",x:"Allora partiamo dal periodo corto e ne parliamo. Ma dimmi la verità [NOME]: il tempo non ce l'hai adesso perché lo passi a cercare i clienti. Se il sistema te li porta già interessati e nella tua zona, quel tempo lo liberi e lo usi per venderli. Quante ore a settimana usi oggi per procurarti contatti?"}],
+ move:"Fagli contare le ore. Se davvero non ha tempo, è una squalifica onesta ed è meglio saperlo subito."},
+
+{v:["as"],t:"Voglio una prova gratis, o pago solo se funziona",
+ trap:"Concedere il trial. Le garanzie SONO la prova.",
+ say:[
+  {k:"",x:"Capisco [NOME], e da dove nasce la domanda lo capisco bene: probabilmente ti hanno già promesso tanto e portato poco. Ti do aspettative concrete: con noi in 7 giorni il sistema è attivo e dalla seconda o terza settimana arrivano i primi contatti. Ma il nostro lavoro lo valuti sui 3-6 mesi, non in due settimane: in due settimane non abbiamo ancora raggiunto neanche mille persone con le ads. Serve commitment e una visione di medio termine, è lì che i risultati arrivano davvero."},
+  {k:"",x:"NOTA per chi parte da zero senza storico di vendita: il primo mese è formazione, le campagne partono dopo 1-2 settimane di training. Diglielo, non lasciargli l'aspettativa dei 7 giorni."}],
+ move:"Il trial non serve, perché la garanzia scalata copre già quel rischio."},
+
+{v:["as"],t:"I lead online sono perditempo, a me bastano i miei contatti",
+ trap:"Difendere i lead.",
+ say:[
+  {k:"",x:"Hai ragione, ed è proprio per questo che abbiamo i nostri filtri di controllo sulle ads e sulle chiamate: ti scremiamo le persone e ti chiediamo di registrare le chiamate. Col feedback che ci dai questo non può succedere, perché se si sbaglia il tiro lo aggiustiamo a tempo zero e andiamo a prendere i prospect giusti."}],
+ move:"Usa la sua obiezione come leva: il perditempo è esattamente il motivo per cui esistono i nostri filtri. Sul Pack B geolocalizzato è lui a chiamare i contatti, non c'è il setter."},
+
+{v:["as"],t:"I premi da 100 o 200 euro al mese sono troppo piccoli",
+ trap:"Promettere clienti grossi che non puoi garantire.",
+ say:[
+  {k:"",x:"Dipende da come li conti [NOME]. Duecento euro al mese sono 2.400 l'anno di premio, e quel premio continua per tutta la durata del piano. Su un semestrale la garanzia sono 12 clienti, tra 20.000 e 30.000 euro di premi ricorrenti; sul trimestrale 6, sull'annuale 32. E l'anno dopo li hai ancora senza rifare niente. Nel tuo mestiere il cliente piccolo è piccolo solo il primo mese."}],
+ move:"Riporta al premio ricorrente e alla durata. Il valore sta nella coda, non nel primo incasso."},
+
+{v:["as"],t:"C'è anche il budget pubblicitario?",
+ trap:"Aspettare che lo scopra dopo. Va sollevata da TE, al secondo appuntamento.",
+ say:[
+  {k:"",x:"Te lo dico chiaro così non ci sono sorprese: il budget pubblicitario è escluso e lo paghi tu direttamente alla piattaforma, minimo consigliato 450 euro al mese. Non passa da noi e non ci guadagniamo sopra. È la benzina: se non la metti la macchina non parte, ma restano soldi tuoi spesi sul tuo nome."}],
+ move:"Trasparenza totale e subito. Toglie il sospetto del ricarico."},
+
+{v:["as"],t:"Il periodo lungo mi spaventa, facciamo un mese",
+ trap:"Concedere il mese singolo.",
+ say:[
+  {k:"",x:"Il mese singolo non lo facciamo, e non è per farti spendere di più. Nel primo mese le campagne si tarano: è il mese in cui si spende e si impara. Se stacchi lì hai pagato solo la parte scomoda. Il minimo con cui vedi qualcosa sono tre mesi. Se il dubbio è il rischio, partiamo dal tre mesi. Se il dubbio è il prezzo, accorciare non ti conviene."}],
+ move:"Si accorcia il periodo, non si abbassa il prezzo. E separa il dubbio sul rischio da quello sul prezzo."},
+
+/* ============ 31/8/2026 ============ */
+{v:["cf","as"],t:"Devo sentire l'avvocato, il commercialista, mia moglie",
+ trap:"Rispondere nel merito. Non è una domanda tecnica, è paura.",
+ say:[
+  {k:"",x:"DIAGNOSI (Francesco, 31/8/2026): sono tutte la stessa obiezione travestita, cioè 'non mi fido di voi e non mi fido neanche di me stesso'. Nessuno deve parlare con nessuno: si sono spaventati quando hanno visto la cifra. Quindi non si risponde nel merito, si alza la fiducia e si chiude."},
+  {k:"",x:"1. RIPORTALO IN CALL. Sul messaggio non ti risponderà mai 'va bene, ti faccio il bonifico'. Chiamata, non chat."},
+  {k:"",x:"2. ALZA LA FIDUCIA CON LE PROVE: ti ho mandato la testimonianza di Flavio Bosia, Fineco di Torino, che aveva lo stesso identico problema. E c'è Marco La Corte, un altro Fineco di Lecce, che dopo neanche un mese si è fatto già i primi tre appuntamenti. In più le creatività le vedi tu prima che vengano pubblicate."},
+  {k:"",x:"3. ISOLA (looping): ti manca solo questo come dato, o possiamo già smarcare qualche altro punto che non ti torna? […] Ok, quindi in caso ti dicesse di no, tu rinunceresti a un sistema che ti può portare fino a quattro clienti in più al mese, e resteresti ferma esattamente come prima di conoscerci?"},
+  {k:"",x:"4. RICONOSCI LA CIFRA, non nasconderla: capisco che è una bella somma, anche io davanti a un'offerta da 2-3.000 euro ci voglio pensare, e proprio per questo non ti ho messo fretta e ti ho lasciato una settimana."},
+  {k:"",x:"5. ALTERNATIVA SECCA: possiamo restare amici come prima, e tu resti con lo stesso problema del passaparola e dei clienti che non bastano, oppure iniziamo questo percorso e ti diamo il sistema. Io per bloccarti la zona ho bisogno di una risposta oggi. Come vuoi procedere?"}],
+ move:"O compra o ti manda via, e va bene lo stesso: lo sposti in pipeline e vai avanti, invece di restare fermo su quel nome per settimane. Mai prendere l'obiezione sul personale."},
+
+{v:["cf","as"],t:"Ha detto sì: come si chiude, dentro la call",
+ trap:"Uscire dalla call con 'ok, poi ti faccio il bonifico'. I soldi arrivano fra tre mesi, o mai.",
+ say:[
+  {k:"",x:"1. Sdrammatizza il contratto: guarda, è veramente uno spuntacchio, sono due righe a prova di mia nonna, giusto per prendere l'accordo. Apriamolo un attimo insieme."},
+  {k:"",x:"2. Guidalo: devi firmare dove vedi la spunta, sotto la casella ci metti i tuoi dati. Controlliamoli insieme così non sbagliamo."},
+  {k:"",x:"3. Fagli ripetere la ZONA ad alta voce: mi sei di [città], giusto? Perfetto, scrivi [città]. Se sbagli zona ne blocchiamo una sbagliata."},
+  {k:"",x:"4. Fatti dire la MANDANTE, perché cambia cosa possiamo e non possiamo dire nelle ads: alcune hanno più regole, altre meno."},
+  {k:"",x:"5. Bonifico INSIEME, subito: le coordinate te le ho già mandate, facciamolo adesso così ti blocco il posto e passo già all'ufficio."},
+  {k:"",x:"6. Data della SECONDA RATA prima di chiudere: dimmi solo una data per l'altra rata, perché sennò l'ufficio mi stacca la testa. Così te la fisso e non ci dobbiamo più pensare."},
+  {k:"",x:"7. Prossimi passi davanti a lui: ti faccio aprire l'account, il gestionale, ti apro il gruppo WhatsApp e iniziamo l'onboarding."}],
+ move:"La leva è sempre l'ufficio amministrativo, mai te stesso. Mai 'dammi 500 e poi vediamo': i soldi entrano lo stesso, ma fra tre mesi."},
+
+{v:["cf","as"],t:"Recuperare un prospect che avevi già lasciato andare",
+ trap:"Chiamare con la coda fra le gambe, da chi ha sbagliato.",
+ say:[
+  {k:"",x:"Cancella il passato. Chiamalo come se fossi il venditore migliore del mondo, non come se avessi fatto tu un errore."},
+  {k:"",x:"Guarda, l'altra volta ho pensato solo a prenderti perché volevo aiutarti. Però una cosa: l'ufficio mi stacca la testa se non ho delle scadenze precise e non so quanto tempo dobbiamo bloccarti la zona. Quindi diamoci una scadenza: andiamo sul semestrale, giusto? Quando facciamo la prima e quando la seconda rata?"},
+  {k:"",x:"Se aveva un impegno preso e non l'ha rispettato (materiali non guardati, cartella non aperta): l'onboarding intanto lo cancelliamo, perché sennò ci guardiamo negli occhi e non abbiamo fatto niente. Ti dico una cosa: non mi piace prendere un impegno e poi non rispettarlo. Hai avuto una settimana, io ti sono venuto incontro. Se oggi non hai ancora avuto modo di farlo, evidentemente non siamo le persone giuste per te, nessun problema e senza rancore, ma io il posto lo lascio a chi è più pronto."}],
+ move:"Esci dalla call con una data scritta, non con una buona sensazione."}
+];
+
+const list=document.getElementById('list'), q=document.getElementById('q'), empty=document.getElementById('empty');
+let vert='cf';
+
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function render(){
+  const term=q.value.trim().toLowerCase();
+  let n=0, html='';
+  DATA.forEach((o,i)=>{
+    if(!o.v.includes(vert)) return;
+    const blob=(o.t+' '+o.trap+' '+o.say.map(s=>s.x).join(' ')+' '+o.move).toLowerCase();
+    if(term && !blob.includes(term)) return;
+    n++;
+    const says=o.say.filter(s=>!s.k||s.k===vert)
+      .map(s=>`<div class="say">${esc(s.x)}</div>`).join('');
+    html+=`<details><summary><span class="num">${n}.</span><span>${esc(o.t)}</span></summary>
+      <div class="body">
+        <div class="lab bad">Trappola</div><div>${esc(o.trap)}</div>
+        <div class="lab good">Cosa dici</div>${says}
+        <div class="move"><strong>La mossa.</strong> ${esc(o.move)}</div>
+      </div></details>`;
+  });
+  list.innerHTML=html;
+  empty.classList.toggle('hidden', n>0);
+}
+
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected','false'));
+  b.setAttribute('aria-selected','true'); vert=b.dataset.v; render();
+}));
+q.addEventListener('input',render);
+render();
+</script>
+</body>
+</html>
