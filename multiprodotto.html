@@ -15,8 +15,9 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .nav{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
 .nav a{font-size:11px;color:#777;text-decoration:none;border-bottom:1px solid transparent;letter-spacing:.3px}
 .nav a:hover{color:#C9A84C;border-color:#C9A84C}
-.ctrls{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #222;background:#0F0F0F}
-@media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr}}
+.ctrls{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid #222;background:#0F0F0F}
+@media(max-width:900px){.ctrls{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.ctrls{grid-template-columns:1fr 1fr}}
 .sl{padding:14px 18px;border-right:1px solid #1a1a1a}
 .sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
 .sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
@@ -61,6 +62,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
   <div class="sl"><label>Provvigione 1° anno</label><input type="range" id="p1Sl" min="0" max="100" value="25" step="1"><div class="sl-val" id="p1V">25%</div></div>
   <div class="sl"><label>Provvigione anni dopo</label><input type="range" id="p2Sl" min="0" max="90" value="15" step="1"><div class="sl-val" id="p2V">15%</div></div>
   <div class="sl"><label>Anni di durata</label><input type="range" id="durSl" min="3" max="15" value="8" step="1"><div class="sl-val" id="durV">8 anni</div></div>
+  <div class="sl"><label>Referenze per cliente</label><input type="range" id="refSl" min="0" max="3" value="0" step="1"><div class="sl-val" id="refV">0 referenze</div></div>
 </div>
 
 <div class="metrics">
@@ -90,7 +92,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="foot">
-  Dati illustrativi, su base 10 appuntamenti/mese garantiti e 40% di chiusura (48 clienti/anno). Mostra il valore del portafoglio (TCM + prodotti aggiuntivi sullo stesso cliente) acquisito in un anno di lavoro insieme: quanto rende il primo anno e quanto vale in totale se i premi restano in vita la durata media indicata. "Altri premi" rappresenta il premio medio aggiuntivo per cliente su LTC, malattie gravi o un prodotto personalizzato, applicato allo stesso cliente TCM.
+  Dati illustrativi, su base 10 appuntamenti/mese garantiti e 40% di chiusura (48 clienti/anno). Mostra il valore del portafoglio (TCM + prodotti aggiuntivi sullo stesso cliente) acquisito in un anno di lavoro insieme: quanto rende il primo anno e quanto vale in totale se i premi restano in vita la durata media indicata. "Altri premi" rappresenta il premio medio aggiuntivo per cliente su LTC, malattie gravi o un prodotto personalizzato, applicato allo stesso cliente TCM. "Referenze per cliente" = quante persone in più (familiari/conoscenti) ogni cliente porta in media: ognuna vale un cliente in più con lo stesso portafoglio premi (0 = nessuna referenza).
 </div>
 
 <script>
@@ -99,12 +101,14 @@ function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M"
 function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
 const CLIENTI_ANNO = 10*12*0.4; // 10 appuntamenti/mese garantiti, 40% chiusura, set canonico
 function calc(){
-  const tcm=+tcmSl.value,altri=+altriSl.value,p1=+p1Sl.value/100,p2=+p2Sl.value/100,dur=+durSl.value;
+  const tcm=+tcmSl.value,altri=+altriSl.value,p1=+p1Sl.value/100,p2=+p2Sl.value/100,dur=+durSl.value,ref=+refSl.value;
   tcmV.textContent=eur(tcm);altriV.textContent=eur(altri);p1V.textContent=(p1*100).toFixed(0)+"%";p2V.textContent=(p2*100).toFixed(0)+"%";durV.textContent=dur+" anni";
+  refV.textContent=ref+(ref===1?" referenza":" referenze");
+  const mult=1+ref; // ogni referenza porta un cliente in più con lo stesso premio
   const premioCliente=tcm+altri;
   const commAnno1Cliente=premioCliente*p1;
   const ricorrenteClienteAnno=premioCliente*p2;
-  const cliAnno=CLIENTI_ANNO;
+  const cliAnno=CLIENTI_ANNO*mult;
   const y1=cliAnno*commAnno1Cliente;
   const ricorrenteAnnoTot=cliAnno*ricorrenteClienteAnno;
   const val=y1+ricorrenteAnnoTot*(dur-1);
@@ -130,7 +134,7 @@ function calc(){
       scales:{x:{ticks:{color:"#666",font:{size:10}},grid:{display:false}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
   });
 }
-[tcmSl,altriSl,p1Sl,p2Sl,durSl].forEach(s=>s.addEventListener("input",calc));
+[tcmSl,altriSl,p1Sl,p2Sl,durSl,refSl].forEach(s=>s.addEventListener("input",calc));
 calc();
 </script>
 </body>
