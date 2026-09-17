@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Elite Advisory — Simulatore Mediatore Creditizio</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',serif;min-height:100vh}
@@ -11,7 +12,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .eyebrow{font-size:11px;letter-spacing:4px;color:#C9A84C;margin-bottom:6px;text-transform:uppercase}
 .hdr h1{font-size:24px;font-weight:700}
 .hdr p{font-size:13px;color:#888;margin-top:6px;max-width:820px;line-height:1.5}
-.ctrls{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #222;background:#0F0F0F}
+.ctrls{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #222;background:#0F0F0F}
 @media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr}}
 .sl{padding:14px 18px;border-right:1px solid #1a1a1a}
 .sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
@@ -24,8 +25,10 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .metric .mv{font-size:19px;font-weight:700;font-family:monospace}
 .metric .mv.gold{color:#C9A84C}.metric .mv.green{color:#6DBF8A}
 .metric .ms{font-size:10px;color:#666;margin-top:2px}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:22px 32px 30px}
-@media(max-width:880px){.cards{grid-template-columns:1fr}}
+.chart-area{padding:22px 32px 8px}
+.chart-area h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:400}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 32px 30px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
 .card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
 .card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
 .ct{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px}
@@ -40,68 +43,95 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 <div class="hdr">
   <div class="eyebrow">AI Elite Advisory</div>
   <h1>Simulatore Mediatore Creditizio</h1>
-  <p>Quanto vale il tuo mese e il tuo anno sulle <b>cessioni del quinto e sui prestiti personali</b>: quante pratiche chiudi, a che importo medio, con la tua percentuale di provvigione. Muovi le leve e vedi il tuo numero.</p>
+  <p>Quanto ti rende <b>quest'anno</b> il lavoro che facciamo insieme, e quanto vale <b>nel tempo</b> quando quegli stessi clienti rinnovano o tornano per una seconda pratica. Nei tuoi numeri.</p>
+  <p style="margin-top:10px"><a href="./multiprodotto.html" style="color:#C9A84C;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase">← Simulatore Multiprodotto</a></p>
 </div>
 
 <div class="ctrls">
-  <div class="sl"><label>Pratiche chiuse / mese</label><input type="range" id="prSl" min="1" max="40" value="8"><div class="sl-val" id="prV">8</div></div>
-  <div class="sl"><label>Importo medio erogato</label><input type="range" id="imSl" min="5000" max="80000" value="25000" step="1000"><div class="sl-val" id="imV">€25.000</div></div>
-  <div class="sl"><label>Provvigione</label><input type="range" id="pcSl" min="0.5" max="12" value="5" step="0.25"><div class="sl-val" id="pcV">5,00%</div></div>
-  <div class="sl"><label>Quota che resta a te</label><input type="range" id="qtSl" min="10" max="100" value="100" step="5"><div class="sl-val" id="qtV">100%</div></div>
+  <div class="sl"><label>Pratiche chiuse / mese</label><input type="range" id="prSl" min="1" max="20" value="4"><div class="sl-val" id="prV">4</div></div>
+  <div class="sl"><label>Importo medio erogato</label><input type="range" id="imSl" min="5000" max="250000" value="30000" step="1000"><div class="sl-val" id="imV">€30.000</div></div>
+  <div class="sl"><label>Provvigione</label><input type="range" id="pcSl" min="0" max="15" value="5" step="0.25"><div class="sl-val" id="pcV">5,00%</div></div>
+  <div class="sl"><label>Referenze per cliente</label><input type="range" id="refSl" min="0" max="3" value="1" step="1"><div class="sl-val" id="refV">1 referenza</div></div>
+  <div class="sl"><label>Rinnovi nel tempo</label><input type="range" id="rnSl" min="0" max="3" value="1" step="1"><div class="sl-val" id="rnV">1 rinnovo</div></div>
 </div>
 
 <div class="metrics">
-  <div class="metric"><label>Erogato / mese</label><div class="mv gold" id="m_ero">—</div><div class="ms" id="m_ero_s">—</div></div>
-  <div class="metric"><label>Provvigione per pratica</label><div class="mv gold" id="m_ppr">—</div><div class="ms">lorda sull'importo erogato</div></div>
-  <div class="metric"><label>Guadagno / mese</label><div class="mv green" id="m_mese">—</div><div class="ms">netto della quota che resta a te</div></div>
-  <div class="metric"><label>Guadagno / anno</label><div class="mv green" id="m_anno">—</div><div class="ms" id="m_anno_s">—</div></div>
+  <div class="metric"><label>Pratiche chiuse / anno</label><div class="mv gold" id="m_pra">—</div><div class="ms" id="m_pra_s">—</div></div>
+  <div class="metric"><label>Guadagno mensile</label><div class="mv green" id="m_mese">—</div><div class="ms" id="m_mese_s">—</div></div>
+  <div class="metric"><label>Guadagno annuale</label><div class="mv green" id="m_y1">—</div></div>
+  <div class="metric"><label>Valore sulla durata</label><div class="mv green" id="m_val">—</div><div class="ms" id="m_val_s">—</div></div>
+</div>
+
+<div class="chart-area">
+  <h3>Quanto vale nel tempo il lavoro di quest'anno (provvigioni cumulate)</h3>
+  <div style="position:relative;height:230px"><canvas id="ch"></canvas></div>
 </div>
 
 <div class="cards">
   <div class="card">
-    <div class="ct">1 Pratica</div>
-    <div class="row"><span class="rl">Importo erogato</span><span class="rv gold" id="c_imp">—</span></div>
-    <div class="row"><span class="rl">Provvigione lorda</span><span class="rv gold" id="c_lorda">—</span></div>
-    <div class="row"><span class="rl">Quanto resta a te</span><span class="rv g" id="c_netta">—</span></div>
+    <div class="ct">1 Cliente</div>
+    <div class="row"><span class="rl">Erogato (con referenze)</span><span class="rv gold" id="c_imp">—</span></div>
+    <div class="row"><span class="rl">Provvigione prima pratica</span><span class="rv g" id="c_comm">—</span></div>
+    <div class="row"><span class="rl">Valore vita (con rinnovi)</span><span class="rv g" id="c_ltv">—</span></div>
   </div>
-  <div class="card big">
-    <div class="ct">Se chiudi 2 pratiche in più al mese</div>
-    <div class="row"><span class="rl">Pratiche / mese</span><span class="rv gold" id="p_pra">—</span></div>
-    <div class="row"><span class="rl">Guadagno / mese</span><span class="rv g" id="p_mese">—</span></div>
-    <div class="row"><span class="rl">Guadagno / anno</span><span class="rv g" id="p_anno">—</span></div>
-    <div class="row"><span class="rl">Differenza in un anno</span><span class="rv gold" id="p_diff">—</span></div>
+  <div class="card">
+    <div class="ct">Il lavoro di quest'anno</div>
+    <div class="row"><span class="rl">Erogato al mese</span><span class="rv gold" id="w_eromese">—</span></div>
+    <div class="row"><span class="rl">Guadagno mensile</span><span class="rv g" id="w_mese">—</span></div>
+    <div class="row"><span class="rl">Pratiche chiuse</span><span class="rv gold" id="w_pra">—</span></div>
+    <div class="row"><span class="rl">Erogato totale</span><span class="rv gold" id="w_ero">—</span></div>
+    <div class="row"><span class="rl">Provvigioni quest'anno</span><span class="rv g" id="w_y1">—</span></div>
+    <div class="row"><span class="rl">Valore su tutta la durata</span><span class="rv g" id="w_val">—</span></div>
   </div>
 </div>
 
 <div class="foot">
-  Dati illustrativi, non una proposta contrattuale. "Provvigione" = percentuale riconosciuta sull'importo erogato della pratica. "Quota che resta a te" = la parte della provvigione che ti rimane dopo eventuali split con mandante, agenzia o segnalatore (100% se incassi tutto tu). Il guadagno annuo assume 12 mesi allo stesso ritmo.
+  Dati illustrativi, non una proposta contrattuale. "Provvigione" = percentuale riconosciuta sull'importo erogato della pratica. "Referenze per cliente" = quante persone (familiari, colleghi, conoscenti) ogni cliente porta in media: ognuna vale una pratica in piu' allo stesso importo medio (0 = nessuna referenza). "Rinnovi nel tempo" = quante volte lo stesso cliente torna con una nuova pratica, per esempio il rinnovo della cessione del quinto o un secondo finanziamento (0 = pratica una tantum). Il grafico distribuisce i rinnovi in modo uniforme sugli anni indicati in fondo.
 </div>
 
 <script>
-function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(2)+"M";if(v>=10000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v).toLocaleString("it-IT")}
+let chart=null;
+function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
 function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
 function calc(){
-  const pr=+prSl.value,im=+imSl.value,pc=+pcSl.value/100,qt=+qtSl.value/100;
+  const pr=+prSl.value,im=+imSl.value,pc=+pcSl.value/100,ref=+refSl.value,rn=+rnSl.value;
+  const mult=1+ref;                  // 0 referenze = x1, ogni referenza vale una pratica in piu'
   prV.textContent=pr;
   imV.textContent=eur(im);
   pcV.textContent=(pc*100).toFixed(2).replace(".",",")+"%";
-  qtV.textContent=Math.round(qt*100)+"%";
+  refV.textContent=ref+(ref===1?" referenza":" referenze");
+  rnV.textContent=rn+(rn===1?" rinnovo":" rinnovi");
 
-  const lorda=im*pc, netta=lorda*qt;
-  const mese=netta*pr, anno=mese*12;
+  const commCli=im*mult*pc;          // provvigione della prima pratica del cliente, referenze incluse
+  const cliAnno=pr*12;               // clienti acquisiti quest'anno
+  const y1=cliAnno*commCli;          // provvigioni quest'anno
+  const val=y1*(1+rn);               // valore del lavoro di quest'anno, rinnovi inclusi
 
-  m_ero.textContent=k(im*pr); m_ero_s.textContent=pr+" pratiche da "+eur(im);
-  m_ppr.textContent=eur(lorda);
-  m_mese.textContent=eur(mese);
-  m_anno.textContent=k(anno); m_anno_s.textContent=eur(anno)+" su 12 mesi";
+  m_pra.textContent=cliAnno*mult; m_pra_s.textContent=cliAnno+" clienti x "+mult+" pratiche";
+  m_y1.textContent=eur(y1);
+  m_mese.textContent=eur(y1/12); m_mese_s.textContent=eur(im*mult*pr)+" erogati al mese";
+  w_eromese.textContent=k(im*mult*pr); w_mese.textContent=eur(y1/12);
+  m_val.textContent=k(val); m_val_s.textContent=rn===0?"nessun rinnovo":"con "+rn+(rn===1?" rinnovo":" rinnovi");
 
-  c_imp.textContent=eur(im); c_lorda.textContent=eur(lorda); c_netta.textContent=eur(netta);
+  c_imp.textContent=k(im*mult); c_comm.textContent=eur(commCli); c_ltv.textContent=k(commCli*(1+rn));
+  w_pra.textContent=cliAnno*mult; w_ero.textContent=k(im*mult*cliAnno); w_y1.textContent=eur(y1); w_val.textContent=k(val);
 
-  const pr2=pr+2, mese2=netta*pr2, anno2=mese2*12;
-  p_pra.textContent=pr2; p_mese.textContent=eur(mese2);
-  p_anno.textContent=k(anno2); p_diff.textContent="+"+eur(anno2-anno);
+  const anni=rn===0?1:rn+1;          // un anno per la prima pratica, poi un anno per ogni rinnovo
+  const labels=[],data=[];
+  for(let y=1;y<=Math.max(anni,3);y++){
+    const quota=Math.min(y,anni)/anni;
+    labels.push("Anno "+y);
+    data.push(Math.round(val*quota));
+  }
+  if(chart)chart.destroy();
+  chart=new Chart(document.getElementById("ch"),{type:"bar",
+    data:{labels,datasets:[{label:"Provvigioni cumulate",data,backgroundColor:"rgba(109,191,138,.45)",borderColor:"#6DBF8A",borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a1a",borderColor:"#333",borderWidth:1,titleColor:"#aaa",bodyColor:"#F5F0E8",callbacks:{label:c=>eur(c.parsed.y)+" cumulati"}}},
+      scales:{x:{ticks:{color:"#666",font:{size:10}},grid:{display:false}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
+  });
 }
-[prSl,imSl,pcSl,qtSl].forEach(s=>s.addEventListener("input",calc));
+[prSl,imSl,pcSl,refSl,rnSl].forEach(s=>s.addEventListener("input",calc));
 calc();
 </script>
 </body>
