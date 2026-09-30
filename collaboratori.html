@@ -12,12 +12,8 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .eyebrow{font-size:11px;letter-spacing:4px;color:#C9A84C;margin-bottom:6px;text-transform:uppercase}
 .hdr h1{font-size:24px;font-weight:700}
 .hdr p{font-size:13px;color:#888;margin-top:6px;max-width:820px;line-height:1.5}
-.mode{display:flex;gap:10px;padding:16px 32px;border-bottom:1px solid #222;background:#0F0F0F;align-items:center;flex-wrap:wrap}
-.mode span{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-right:6px}
-.mode button{background:#161616;color:#aaa;border:1px solid #333;border-radius:6px;padding:9px 16px;font-family:inherit;font-size:13px;cursor:pointer}
-.mode button.on{border-color:#C9A84C;color:#C9A84C;background:rgba(201,168,76,.08);font-weight:700}
 .ctrls{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #222;background:#0F0F0F}
-@media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr}.hdr,.mode{padding-left:16px;padding-right:16px}}
+@media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr}.hdr{padding-left:16px;padding-right:16px}}
 .sl{padding:14px 18px;border-right:1px solid #1a1a1a}
 .sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
 .sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
@@ -31,8 +27,8 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 .metric .ms{font-size:10px;color:#666;margin-top:2px}
 .chart-area{padding:22px 32px 8px}
 .chart-area h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:400}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 32px 30px}
-@media(max-width:760px){.cards{grid-template-columns:1fr;padding:14px 16px 30px}.chart-area,.foot{padding-left:16px;padding-right:16px}}
+.cards{display:grid;grid-template-columns:1fr;max-width:640px;gap:14px;padding:14px 32px 30px}
+@media(max-width:760px){.cards{padding:14px 16px 30px}.chart-area,.foot{padding-left:16px;padding-right:16px}}
 .card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
 .card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
 .ct{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px}
@@ -48,22 +44,16 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 <div class="hdr">
   <div class="eyebrow">AI Elite Advisory</div>
   <h1>Simulatore Recruiting Chiavi in Mano</h1>
-  <p>Parti da <b>quanti collaboratori vuoi inserire</b>. Il simulatore ti dice quanti candidati servono, quanti colloqui, in quanti mesi e con quale budget. E ti fa vedere la differenza fra chiamarli <b>tu</b> e lasciarli filtrare <b>al nostro setter</b>.</p>
+  <p>Parti da <b>quanti collaboratori vuoi inserire</b>. Il simulatore ti dice quanti candidati servono, quanti colloqui, in quanti mesi e con quale budget.</p>
   <p style="margin-top:10px"><a href="./multiprodotto.html" style="color:#C9A84C;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase">← Simulatore Multiprodotto</a></p>
-</div>
-
-<div class="mode">
-  <span>Chi contatta i candidati</span>
-  <button id="bNoi" class="on">Noi, col setter</button>
-  <button id="bTu">Tu, di persona</button>
 </div>
 
 <div class="ctrls">
   <div class="sl"><label>Collaboratori che vuoi</label><input type="range" id="colSl" min="1" max="20" value="5"><div class="sl-val" id="colV">5</div></div>
-  <div class="sl"><label>Colloquio → collaboratore</label><input type="range" id="convSl" min="5" max="60" value="30" step="1"><div class="sl-val" id="convV">30%</div></div>
-  <div class="sl"><label id="apLab">Candidati → colloquio (setter)</label><input type="range" id="apSl" min="1" max="40" value="10" step="1"><div class="sl-val" id="apV">10%</div></div>
-  <div class="sl"><label>Budget ads / mese</label><input type="range" id="budSl" min="150" max="1500" value="300" step="50"><div class="sl-val" id="budV">€300</div></div>
   <div class="sl"><label>Costo per candidato</label><input type="range" id="cplSl" min="2" max="20" value="5" step="0.5"><div class="sl-val" id="cplV">€5,00</div></div>
+  <div class="sl"><label>Budget ads / mese</label><input type="range" id="budSl" min="150" max="1500" value="300" step="50"><div class="sl-val" id="budV">€300</div></div>
+  <div class="sl"><label>Candidati → colloquio</label><input type="range" id="apSl" min="1" max="40" value="10" step="1"><div class="sl-val" id="apV">10%</div></div>
+  <div class="sl"><label>Colloquio → collaboratore</label><input type="range" id="convSl" min="5" max="60" value="30" step="1"><div class="sl-val" id="convV">30%</div></div>
 </div>
 
 <div class="metrics">
@@ -79,14 +69,6 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="cards">
-  <div class="card big">
-    <div class="ct" id="t_mode">Col nostro setter</div>
-    <div class="row"><span class="rl">Chi fa il primo contatto</span><span class="rv gold" id="c_chi">—</span></div>
-    <div class="row"><span class="rl">Candidati che contatti tu</span><span class="rv" id="c_tuoi">—</span></div>
-    <div class="row"><span class="rl">Colloqui che fai tu</span><span class="rv gold" id="c_tuoicoll">—</span></div>
-    <div class="row"><span class="rl">Garanzia</span><span class="rv" id="c_gar">—</span></div>
-    <div class="note" id="c_note">—</div>
-  </div>
   <div class="card">
     <div class="ct">Il percorso</div>
     <div class="row"><span class="rl">Candidati al mese (dal budget)</span><span class="rv gold" id="p_candm">—</span></div>
@@ -98,26 +80,16 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="foot">
-  Dati illustrativi, non una proposta contrattuale. La garanzia contrattuale riguarda solo i colloqui presentati (5 al mese, 50 candidati filtrati dal setter) e vale solo se i candidati li lavora il nostro setter: non si garantisce mai la scelta ne' la produzione del collaboratore. "Colloquio → collaboratore" e' la quota dei colloqui che diventa collaboratore inserito. "Candidati → colloquio" e' la quota dei candidati raccolti dalle campagne che arriva davvero al colloquio. "Costo per candidato" e' quanto costa in pubblicita' un candidato che compila il modulo. Il budget pubblicitario e' sempre a carico tuo.
+  Dati illustrativi, non una proposta contrattuale. "Costo per candidato" e' quanto costa in pubblicita' un candidato che compila il modulo. "Candidati → colloquio" e' la quota dei candidati che arriva davvero al colloquio. "Colloquio → collaboratore" e' la quota dei colloqui che diventa collaboratore inserito. Il budget pubblicitario e' sempre a carico tuo.
 </div>
 
 <script>
-let chart=null,mode="noi";
-const GAR_COLL=5;                       // colloqui presentati garantiti al mese (contratto, Art. 5.1)
-const rate={noi:10,tu:10};              // candidati -> colloquio per modalita', modificabili dallo slider
+let chart=null;
 function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
 function n(v){return Math.round(v).toLocaleString("it-IT")}
 function mesiTxt(m){return m+(m===1?" mese":" mesi")}
-function setMode(m){
-  mode=m;
-  bNoi.classList.toggle("on",m==="noi");bTu.classList.toggle("on",m==="tu");
-  apLab.textContent=m==="noi"?"Candidati → colloquio (setter)":"Candidati → colloquio (tu)";
-  apSl.value=rate[m];
-  calc();
-}
 function calc(){
   const col=+colSl.value,conv=+convSl.value/100,ap=+apSl.value/100,bud=+budSl.value,cpl=+cplSl.value;
-  rate[mode]=+apSl.value;
   colV.textContent=col;convV.textContent=Math.round(conv*100)+"%";apV.textContent=Math.round(ap*100)+"%";
   budV.textContent=eur(bud);cplV.textContent="€"+cpl.toFixed(2).replace(".",",");
 
@@ -131,7 +103,7 @@ function calc(){
   m_cand.textContent=n(cand);m_cand_s.textContent=n(coll)+" colloqui / "+Math.round(ap*100)+"%";
   m_coll.textContent=n(coll);m_coll_s.textContent=col+" collaboratori / "+Math.round(conv*100)+"%";
   m_mesi.textContent=mesiTxt(mesi);
-  m_mesi_s.textContent=mode==="noi"?"garantiti almeno "+GAR_COLL+" colloqui al mese":"dipende dai candidati che richiami";
+  m_mesi_s.textContent=n(candM)+" candidati al mese";
   m_bud.textContent=eur(budTot);m_bud_s.textContent=mesiTxt(mesi)+" x "+eur(bud);
 
   p_candm.textContent=n(candM);p_collm.textContent=collM.toFixed(1).replace(".",",");
@@ -139,21 +111,6 @@ function calc(){
   p_cpc.textContent=eur(budTot/col);
   p_pack.textContent=mesi<=3?"Trimestrale":mesi<=6?"Semestrale":"Oltre 6 mesi";
 
-  if(mode==="noi"){
-    t_mode.textContent="Col nostro setter";
-    c_chi.textContent="il setter";
-    c_tuoi.textContent="0";c_tuoi.className="rv g";
-    c_tuoicoll.textContent=n(coll);
-    c_gar.textContent=GAR_COLL+" colloqui / mese";c_gar.className="rv g";
-    c_note.textContent="Tutti i "+n(cand)+" candidati li scrive e li filtra il setter a tuo nome, controlla che abbiano visto il video e ti passa solo chi e' in target. Tu entri al colloquio.";
-  }else{
-    t_mode.textContent="Li chiami tu";
-    c_chi.textContent="tu";
-    c_tuoi.textContent=n(cand);c_tuoi.className="rv r";
-    c_tuoicoll.textContent=n(coll);
-    c_gar.textContent="non applicabile";c_gar.className="rv r";
-    c_note.textContent="I "+n(cand)+" candidati li devi contattare tu, uno per uno, prima che si raffreddino. Il numero di colloqui dipende da quanti ne richiami e da quanto in fretta, per questo sui colloqui non c'e' garanzia.";
-  }
 
   if(chart)chart.destroy();
   chart=new Chart(document.getElementById("ch"),{type:"bar",
@@ -164,8 +121,6 @@ function calc(){
       scales:{x:{ticks:{color:"#555",font:{size:10}},grid:{color:"#161616"}},y:{ticks:{color:"#aaa",font:{size:12}},grid:{display:false}}}}
   });
 }
-bNoi.addEventListener("click",()=>setMode("noi"));
-bTu.addEventListener("click",()=>setMode("tu"));
 [colSl,convSl,apSl,budSl,cplSl].forEach(s=>s.addEventListener("input",calc));
 calc();
 </script>
