@@ -91,7 +91,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 let chart=null;
 const ORIZZ=10;
 function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
-function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
+function eur(v){return"€"+String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g,".")}
 function calc(){
   const cm=+cmSl.value,mix=+mixSl.value/100,ref=+famSl.value,spot=+spotSl.value,piano=+pianoSl.value,dur=+durSl.value;
   cmV.textContent=cm;mixV.textContent=Math.round(mix*100)+"%";famV.textContent=ref+(ref===1?" referenza":" referenze");

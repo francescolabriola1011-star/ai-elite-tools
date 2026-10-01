@@ -89,7 +89,7 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 let chart=null;
 const COSTO=17400;
 function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
-function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
+function eur(v){return"€"+String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g,".")}
 function calc(){
   const cm=+cmSl.value,aum=+aumSl.value,ref=+famSl.value,fee=+feeSl.value/100,dur=+durSl.value;
   const mult=1+ref;                 // 0 referenze = ×1, ogni referenza vale un cliente in più allo stesso gestito
