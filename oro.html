@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Elite Advisory · Simulatore Oro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+.hdr{padding:24px 32px 20px;border-bottom:1px solid #2a2a2a;background:#111}
+.eyebrow{font-size:11px;letter-spacing:4px;color:#C9A84C;margin-bottom:6px;text-transform:uppercase}
+.hdr h1{font-size:24px;font-weight:700}
+.hdr p{font-size:13px;color:#888;margin-top:6px;max-width:780px;line-height:1.5}
+.ctrls{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #222;background:#0F0F0F}
+@media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr}}
+.sl{padding:14px 18px;border-right:1px solid #1a1a1a}
+.sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
+.sl-val{font-size:15px;font-weight:700;color:#C9A84C;font-family:monospace}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #222}
+@media(max-width:760px){.metrics{grid-template-columns:1fr 1fr}}
+.metric{padding:16px 20px;border-right:1px solid #1a1a1a}
+.metric label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.metric .mv{font-size:19px;font-weight:700;font-family:monospace}
+.metric .mv.gold{color:#C9A84C}.metric .mv.green{color:#6DBF8A}
+.metric .ms{font-size:10px;color:#666;margin-top:2px}
+.chart-area{padding:22px 32px 8px}
+.chart-area h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:400}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 32px 30px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+.card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
+.card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
+.ct{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a}
+.row:last-child{border:none}
+.rl{font-size:13px;color:#aaa}.rv{font-size:14px;font-weight:700;font-family:monospace}
+.rv.g{color:#6DBF8A}.rv.gold{color:#C9A84C}
+.punch{font-size:14px;color:#F5F0E8;line-height:1.6}.punch b{color:#6DBF8A}
+.foot{font-size:11px;color:#555;padding:0 32px 30px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="eyebrow">AI Elite Advisory</div>
+  <h1>Simulatore Oro</h1>
+  <p>Quanto ti rendono <b>quest'anno</b> i clienti che ti portiamo, fra acquisti spot e piani d'accumulo, e quanto valgono <b>nei prossimi 10 anni</b> se i piani restano attivi. Nei tuoi numeri.</p>
+</div>
+
+<div class="ctrls">
+  <div class="sl"><label>Clienti / mese</label><input type="range" id="cmSl" min="1" max="4" value="2"><div class="sl-val" id="cmV">2</div></div>
+  <div class="sl"><label>Clienti che aprono un piano</label><input type="range" id="mixSl" min="0" max="100" value="50" step="10"><div class="sl-val" id="mixV">50%</div></div>
+  <div class="sl"><label>Referenze per cliente</label><input type="range" id="famSl" min="0" max="3" value="1" step="1"><div class="sl-val" id="famV">1 referenza</div></div>
+  <div class="sl"><label>Commissione su un acquisto spot</label><input type="range" id="spotSl" min="100" max="3000" value="500" step="50"><div class="sl-val" id="spotV">€500</div></div>
+  <div class="sl"><label>Commissione annua su un piano</label><input type="range" id="pianoSl" min="100" max="2000" value="300" step="50"><div class="sl-val" id="pianoV">€300</div></div>
+  <div class="sl"><label>Durata media del piano</label><input type="range" id="durSl" min="1" max="10" value="10"><div class="sl-val" id="durV">10 anni</div></div>
+</div>
+
+<div class="metrics">
+  <div class="metric"><label>Clienti acquisiti / anno</label><div class="mv gold" id="m_cli">-</div><div class="ms" id="m_cli_s">-</div></div>
+  <div class="metric"><label>Commissioni quest'anno</label><div class="mv green" id="m_y1">-</div></div>
+  <div class="metric"><label>Valore in 10 anni</label><div class="mv green" id="m_val">-</div><div class="ms" id="m_val_s">-</div></div>
+</div>
+
+<div class="chart-area">
+  <h3>Quanto vale nei prossimi 10 anni il lavoro di quest'anno (commissioni cumulate)</h3>
+  <div style="position:relative;height:230px"><canvas id="ch"></canvas></div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="ct">I clienti di quest'anno</div>
+    <div class="row"><span class="rl">Acquisti spot</span><span class="rv gold" id="c_spot">-</span></div>
+    <div class="row"><span class="rl">Piani d'accumulo aperti</span><span class="rv gold" id="c_piani">-</span></div>
+    <div class="row"><span class="rl">Commissioni spot (una volta)</span><span class="rv g" id="c_cspot">-</span></div>
+    <div class="row"><span class="rl">Commissioni piani / anno</span><span class="rv g" id="c_cpiani">-</span></div>
+  </div>
+  <div class="card">
+    <div class="ct">Il lavoro di quest'anno</div>
+    <div class="row"><span class="rl">Clienti acquisiti</span><span class="rv gold" id="w_cli">-</span></div>
+    <div class="row"><span class="rl">Commissioni quest'anno</span><span class="rv g" id="w_y1">-</span></div>
+    <div class="row"><span class="rl">Valore in 10 anni</span><span class="rv g" id="w_val">-</span></div>
+  </div>
+</div>
+
+<div class="foot">
+  Dati illustrativi, da compilare con i tuoi numeri. Mostra il valore dei <b>clienti acquisiti in un anno</b> di lavoro insieme. Chi fa un acquisto spot ti lascia la commissione una volta sola; chi apre un piano d'accumulo ti lascia la commissione ogni anno, per la durata indicata. "Referenze per cliente" = quante persone (familiari e conoscenti) ogni cliente porta in media: ognuna vale un cliente in più con la stessa scelta fra spot e piano (0 = nessuna referenza). Non tiene conto dei riacquisti spot, che si aggiungono.
+</div>
+
+<script>
+let chart=null;
+const ORIZZ=10;
+function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
+function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
+function calc(){
+  const cm=+cmSl.value,mix=+mixSl.value/100,ref=+famSl.value,spot=+spotSl.value,piano=+pianoSl.value,dur=+durSl.value;
+  cmV.textContent=cm;mixV.textContent=Math.round(mix*100)+"%";famV.textContent=ref+(ref===1?" referenza":" referenze");
+  spotV.textContent=eur(spot);pianoV.textContent=eur(piano);durV.textContent=dur+(dur===1?" anno":" anni");
+  const cliAnno=cm*12*(1+ref);          // clienti dell'anno, referenze incluse
+  const nPiani=cliAnno*mix, nSpot=cliAnno-nPiani;
+  const cSpot=nSpot*spot;               // una tantum, anno 1
+  const cPiani=nPiani*piano;            // ogni anno per la durata del piano
+  const y1=cSpot+cPiani;
+  const data=[],labels=[];let cum=0;
+  for(let y=1;y<=ORIZZ;y++){cum+=(y===1?cSpot:0)+(y<=dur?cPiani:0);labels.push("Anno "+y);data.push(Math.round(cum));}
+  const val=cum;
+  m_cli.textContent=Math.round(cliAnno); m_cli_s.textContent=(ref?"di cui "+cm*12*ref+" da referenze":"senza referenze");
+  m_y1.textContent=eur(y1);
+  m_val.textContent=k(val); m_val_s.textContent="piani attivi per "+dur+(dur===1?" anno":" anni");
+  c_spot.textContent=Math.round(nSpot); c_piani.textContent=Math.round(nPiani);
+  c_cspot.textContent=eur(cSpot); c_cpiani.textContent=eur(cPiani);
+  w_cli.textContent=Math.round(cliAnno); w_y1.textContent=eur(y1); w_val.textContent=k(val);
+  if(chart)chart.destroy();
+  chart=new Chart(document.getElementById("ch"),{type:"bar",
+    data:{labels,datasets:[{label:"Commissioni cumulate",data,backgroundColor:"rgba(109,191,138,.45)",borderColor:"#6DBF8A",borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a1a",borderColor:"#333",borderWidth:1,titleColor:"#aaa",bodyColor:"#F5F0E8",callbacks:{label:c=>eur(c.parsed.y)+" cumulati"}}},
+      scales:{x:{ticks:{color:"#666",font:{size:10}},grid:{display:false}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
+  });
+}
+[cmSl,mixSl,famSl,spotSl,pianoSl,durSl].forEach(s=>s.addEventListener("input",calc));
+calc();
+</script>
+</body>
+</html>

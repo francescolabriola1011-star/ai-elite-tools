@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Elite Advisory · Simulatore del Gestito</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+.hdr{padding:24px 32px 20px;border-bottom:1px solid #2a2a2a;background:#111}
+.eyebrow{font-size:11px;letter-spacing:4px;color:#C9A84C;margin-bottom:6px;text-transform:uppercase}
+.hdr h1{font-size:24px;font-weight:700}
+.hdr p{font-size:13px;color:#888;margin-top:6px;max-width:780px;line-height:1.5}
+.ctrls{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #222;background:#0F0F0F}
+@media(max-width:760px){.ctrls{grid-template-columns:1fr 1fr}}
+.sl{padding:14px 18px;border-right:1px solid #1a1a1a}
+.sl label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.sl input{width:100%;accent-color:#C9A84C;cursor:pointer;margin-bottom:3px}
+.sl-val{font-size:15px;font-weight:700;color:#C9A84C;font-family:monospace}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #222}
+@media(max-width:760px){.metrics{grid-template-columns:1fr 1fr}}
+.metric{padding:16px 20px;border-right:1px solid #1a1a1a}
+.metric label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.metric .mv{font-size:19px;font-weight:700;font-family:monospace}
+.metric .mv.gold{color:#C9A84C}.metric .mv.green{color:#6DBF8A}
+.metric .ms{font-size:10px;color:#666;margin-top:2px}
+.chart-area{padding:22px 32px 8px}
+.chart-area h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:400}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 32px 30px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+.card{background:#111;border:1px solid #222;border-radius:8px;padding:16px 18px}
+.card.big{border-color:#C9A84C;background:rgba(201,168,76,.06)}
+.ct{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C9A84C;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a}
+.row:last-child{border:none}
+.rl{font-size:13px;color:#aaa}.rv{font-size:14px;font-weight:700;font-family:monospace}
+.rv.g{color:#6DBF8A}.rv.gold{color:#C9A84C}
+.punch{font-size:14px;color:#F5F0E8;line-height:1.6}.punch b{color:#6DBF8A}
+.foot{font-size:11px;color:#555;padding:0 32px 30px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="eyebrow">AI Elite Advisory</div>
+  <h1>Simulatore del Gestito</h1>
+  <p>Quanto ti rende <b>quest'anno</b> il lavoro che facciamo insieme, e quanto vale <b>nei prossimi 10 anni</b> se i clienti che ti portiamo restano con te. Nei tuoi numeri.</p>
+</div>
+
+<div class="ctrls">
+  <div class="sl"><label>Clienti / mese</label><input type="range" id="cmSl" min="1" max="4" value="2"><div class="sl-val" id="cmV">2</div></div>
+  <div class="sl"><label>Gestito medio / cliente</label><input type="range" id="aumSl" min="50000" max="300000" value="100000" step="10000"><div class="sl-val" id="aumV">€100k</div></div>
+  <div class="sl"><label>Referenze per cliente</label><input type="range" id="famSl" min="0" max="3" value="1" step="1"><div class="sl-val" id="famV">1 referenza</div></div>
+  <div class="sl"><label>Fee gestione / anno</label><input type="range" id="feeSl" min="0.5" max="1.5" value="1" step="0.1"><div class="sl-val" id="feeV">1,0%</div></div>
+  <div class="sl"><label>Durata media cliente</label><input type="range" id="durSl" min="3" max="15" value="10"><div class="sl-val" id="durV">10 anni</div></div>
+</div>
+
+<div class="metrics">
+  <div class="metric"><label>Clienti acquisiti / anno</label><div class="mv gold" id="m_cli">—</div></div>
+  <div class="metric"><label>Commissioni quest'anno</label><div class="mv green" id="m_y1">—</div></div>
+  <div class="metric"><label>Valore sulla durata</label><div class="mv green" id="m_val">—</div><div class="ms" id="m_val_s">—</div></div>
+</div>
+
+<div class="chart-area">
+  <h3>Quanto vale nel tempo il lavoro di quest'anno (commissioni cumulate)</h3>
+  <div style="position:relative;height:230px"><canvas id="ch"></canvas></div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="ct">1 Cliente</div>
+    <div class="row"><span class="rl">Gestito (con referenze)</span><span class="rv gold" id="c_aum">—</span></div>
+    <div class="row"><span class="rl">Commissione / anno</span><span class="rv g" id="c_comm">—</span></div>
+    <div class="row"><span class="rl">Valore vita</span><span class="rv g" id="c_ltv">—</span></div>
+  </div>
+  <div class="card">
+    <div class="ct">Il lavoro di quest'anno</div>
+    <div class="row"><span class="rl">Clienti acquisiti</span><span class="rv gold" id="w_cli">—</span></div>
+    <div class="row"><span class="rl">Commissioni quest'anno</span><span class="rv g" id="w_y1">—</span></div>
+    <div class="row"><span class="rl">Valore su tutta la durata</span><span class="rv g" id="w_val">—</span></div>
+  </div>
+</div>
+
+<div class="foot">
+  Dati illustrativi. Mostra il valore dei <b>clienti acquisiti in un anno</b> di lavoro insieme: quanto rendono il primo anno e quanto valgono in totale se restano la durata media indicata. "Referenze per cliente" = quante persone (familiari e conoscenti) ogni cliente porta in media: ognuna vale un cliente in più con lo stesso gestito medio (0 = nessuna referenza).
+</div>
+
+<script>
+let chart=null;
+const COSTO=17400;
+function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
+function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
+function calc(){
+  const cm=+cmSl.value,aum=+aumSl.value,ref=+famSl.value,fee=+feeSl.value/100,dur=+durSl.value;
+  const mult=1+ref;                 // 0 referenze = ×1, ogni referenza vale un cliente in più allo stesso gestito
+  cmV.textContent=cm;aumV.textContent=k(aum);famV.textContent=ref+(ref===1?" referenza":" referenze");feeV.textContent=(fee*100).toFixed(1).replace(".",",")+"%";durV.textContent=dur+" anni";
+  const commCli=aum*mult*fee;       // commissione/anno per cliente (incluse referenze)
+  const cliAnno=cm*12;              // clienti acquisiti quest'anno
+  const y1=cliAnno*commCli;         // commissioni quest'anno (coorte, anno pieno)
+  const val=y1*dur;                 // valore del lavoro di quest'anno sulla permanenza
+  // metrics
+  m_cli.textContent=cliAnno;
+  m_y1.textContent=eur(y1);
+  m_val.textContent=k(val); m_val_s.textContent="se restano "+dur+" anni";
+  // card 1 cliente
+  c_aum.textContent=k(aum*mult); c_comm.textContent=eur(commCli); c_ltv.textContent=k(commCli*dur);
+  // card lavoro di quest'anno
+  w_cli.textContent=cliAnno; w_y1.textContent=eur(y1); w_val.textContent=k(val);
+  // chart: valore cumulato del lavoro di quest'anno, anno per anno fino alla durata
+  const labels=[],data=[];
+  for(let y=1;y<=dur;y++){labels.push("Anno "+y);data.push(Math.round(y1*y));}
+  if(chart)chart.destroy();
+  chart=new Chart(document.getElementById("ch"),{type:"bar",
+    data:{labels,datasets:[{label:"Commissioni cumulate",data,backgroundColor:"rgba(109,191,138,.45)",borderColor:"#6DBF8A",borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a1a",borderColor:"#333",borderWidth:1,titleColor:"#aaa",bodyColor:"#F5F0E8",callbacks:{label:c=>eur(c.parsed.y)+" cumulati"}}},
+      scales:{x:{ticks:{color:"#666",font:{size:10}},grid:{display:false}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
+  });
+}
+[cmSl,aumSl,famSl,feeSl,durSl].forEach(s=>s.addEventListener("input",calc));
+calc();
+</script>
+</body>
+</html>
