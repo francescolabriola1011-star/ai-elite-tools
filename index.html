@@ -49,11 +49,13 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="ctrls">
-  <div class="sl"><label>Clienti / mese</label><input type="range" id="cmSl" min="1" max="4" value="2"><div class="sl-val" id="cmV">2</div></div>
-  <div class="sl"><label>Gestito medio / cliente</label><input type="range" id="aumSl" min="50000" max="300000" value="100000" step="10000"><div class="sl-val" id="aumV">€100k</div></div>
-  <div class="sl"><label>Referenze per cliente</label><input type="range" id="famSl" min="0" max="3" value="1" step="1"><div class="sl-val" id="famV">1 referenza</div></div>
+  <div class="sl"><label>Clienti al mese, stima pessimistica</label><input type="range" id="cmSl" min="1" max="2" value="1"><div class="sl-val" id="cmV">1</div></div>
+  <div class="sl"><label>Gestito medio del suo cliente</label><input type="range" id="aumSl" min="50000" max="300000" value="100000" step="10000"><div class="sl-val" id="aumV">€100k</div></div>
+  <div class="sl"><label>Referenze potenziali per cliente</label><input type="range" id="famSl" min="0" max="1" value="1" step="1"><div class="sl-val" id="famV">1 referenza</div></div>
   <div class="sl"><label>Fee gestione / anno</label><input type="range" id="feeSl" min="0.5" max="1.5" value="1" step="0.1"><div class="sl-val" id="feeV">1,0%</div></div>
-  <div class="sl"><label>Durata media cliente</label><input type="range" id="durSl" min="3" max="15" value="8"><div class="sl-val" id="durV">8 anni</div></div>
+  <div class="sl"><label>Orizzonte della proiezione</label><input type="range" id="durSl" min="3" max="15" value="10"><div class="sl-val" id="durV">10 anni</div></div>
+  <div class="sl"><label>Fee con noi, 12 mesi</label><input type="number" id="feeInv" min="0" step="100" value="9600" style="width:100%;padding:6px;background:#111;color:#F5F0E8;border:1px solid #333;border-radius:4px"></div>
+  <div class="sl"><label>Budget ads al mese (quello del suo preventivo)</label><input type="number" id="adsInv" min="0" step="50" placeholder="inserisci" style="width:100%;padding:6px;background:#111;color:#F5F0E8;border:1px solid #333;border-radius:4px"></div>
 </div>
 
 <div class="metrics">
@@ -61,9 +63,14 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
   <div class="metric"><label>Commissioni quest'anno</label><div class="mv green" id="m_y1">—</div></div>
   <div class="metric"><label>Valore sulla durata</label><div class="mv green" id="m_val">—</div><div class="ms" id="m_val_s">—</div></div>
 </div>
+<div class="metrics">
+  <div class="metric"><label>Investimento 1° anno</label><div class="mv gold" id="m_inv">—</div><div class="ms" id="m_inv_s">fee + ads</div></div>
+  <div class="metric"><label>Primo anno contro investimento</label><div class="mv green" id="m_roi1">—</div><div class="ms" id="m_roi1_s">—</div></div>
+  <div class="metric"><label>Sull'orizzonte ogni euro investito ne rende</label><div class="mv green" id="m_roid">—</div><div class="ms" id="m_roid_s">—</div></div>
+</div>
 
 <div class="chart-area">
-  <h3>Quanto vale nel tempo il lavoro di quest'anno (commissioni cumulate)</h3>
+  <h3>Quanto valgono nel tempo i clienti del primo anno (commissioni cumulate)</h3>
   <div style="position:relative;height:230px"><canvas id="ch"></canvas></div>
 </div>
 
@@ -83,12 +90,11 @@ body{background:#0C0C0C;color:#F5F0E8;font-family:Georgia,'Times New Roman',seri
 </div>
 
 <div class="foot">
-  Dati illustrativi. Mostra il valore dei <b>clienti acquisiti in un anno</b> di lavoro insieme: quanto rendono il primo anno e quanto valgono in totale se restano la durata media indicata. "Referenze per cliente" = quante persone (familiari/conoscenti) ogni cliente porta in media: ognuna vale un cliente in più con lo stesso gestito medio (0 = nessuna referenza).
+  Dati illustrativi, stima pessimistica. Conta solo i <b>clienti acquisiti nel primo anno</b>: 1 o 2 al mese, ognuno con al massimo 1 referenza potenziale che vale un cliente in più con lo stesso gestito. Il primo anno conta i mesi veri: un cliente preso a dicembre rende un mese, non dodici. La proiezione non aggiunge altro: niente clienti degli anni dopo, niente crescita del gestito. L'investimento è fee più budget ads del suo preventivo.
 </div>
 
 <script>
 let chart=null;
-const COSTO=17400;
 function k(v){if(v>=1000000)return"€"+(v/1000000).toFixed(v>=10000000?1:2)+"M";if(v>=1000)return"€"+Math.round(v/1000)+"k";return"€"+Math.round(v)}
 function eur(v){return"€"+Math.round(v).toLocaleString("it-IT")}
 function calc(){
@@ -96,20 +102,27 @@ function calc(){
   const mult=1+ref;                 // 0 referenze = ×1, ogni referenza vale un cliente in più allo stesso gestito
   cmV.textContent=cm;aumV.textContent=k(aum);famV.textContent=ref+(ref===1?" referenza":" referenze");feeV.textContent=(fee*100).toFixed(1).replace(".",",")+"%";durV.textContent=dur+" anni";
   const commCli=aum*mult*fee;       // commissione/anno per cliente (incluse referenze)
-  const cliAnno=cm*12;              // clienti acquisiti quest'anno
-  const y1=cliAnno*commCli;         // commissioni quest'anno (coorte, anno pieno)
-  const val=y1*dur;                 // valore del lavoro di quest'anno sulla permanenza
-  // metrics
+  const cliAnno=cm*12;              // clienti acquisiti nel primo anno, uno ogni mese
+  // primo anno a mesi veri: il cliente del mese i rende (13-i)/12 dell'anno, in media 6,5 mesi
+  const y1=cm*commCli*78/12;
+  const val=cliAnno*commCli*dur;    // valore dei clienti del primo anno sull'orizzonte
   m_cli.textContent=cliAnno;
   m_y1.textContent=eur(y1);
-  m_val.textContent=k(val); m_val_s.textContent="se restano "+dur+" anni";
-  // card 1 cliente
+  m_val.textContent=k(val); m_val_s.textContent="in "+dur+" anni";
   c_aum.textContent=k(aum*mult); c_comm.textContent=eur(commCli); c_ltv.textContent=k(commCli*dur);
-  // card lavoro di quest'anno
   w_cli.textContent=cliAnno; w_y1.textContent=eur(y1); w_val.textContent=k(val);
+  const ads=adsInv.value===""?null:+adsInv.value, inv=ads===null?null:(+feeInv.value||0)+ads*12;
+  if(inv){
+    m_inv.textContent=eur(inv);
+    const r1=y1/inv; m_roi1.textContent="×"+r1.toFixed(1).replace(".",",");
+    m_roi1_s.textContent=r1>=1?"si ripaga già il primo anno":"pareggio non ancora raggiunto";
+    m_roid.textContent="€"+Math.round(val/inv); m_roid_s.textContent=eur(val)+" contro "+eur(inv);
+  }else{
+    m_inv.textContent="n.d."; m_roi1.textContent="n.d."; m_roi1_s.textContent="inserisci il budget ads"; m_roid.textContent="n.d."; m_roid_s.textContent="inserisci il budget ads";
+  }
   // chart: valore cumulato del lavoro di quest'anno, anno per anno fino alla durata
   const labels=[],data=[];
-  for(let y=1;y<=dur;y++){labels.push("Anno "+y);data.push(Math.round(y1*y));}
+  for(let y=1;y<=dur;y++){let mesi=0;for(let i=1;i<=12;i++){mesi+=Math.min(Math.max(12*y-(i-1),0),dur*12);}labels.push("Anno "+y);data.push(Math.round(cm*commCli*mesi/12));}
   if(chart)chart.destroy();
   chart=new Chart(document.getElementById("ch"),{type:"bar",
     data:{labels,datasets:[{label:"Commissioni cumulate",data,backgroundColor:"rgba(109,191,138,.45)",borderColor:"#6DBF8A",borderWidth:1,borderRadius:3}]},
@@ -118,7 +131,7 @@ function calc(){
       scales:{x:{ticks:{color:"#666",font:{size:10}},grid:{display:false}},y:{ticks:{color:"#555",font:{size:10},callback:v=>k(v)},grid:{color:"#161616"}}}}
   });
 }
-[cmSl,aumSl,famSl,feeSl,durSl].forEach(s=>s.addEventListener("input",calc));
+[cmSl,aumSl,famSl,feeSl,durSl,feeInv,adsInv].forEach(s=>s.addEventListener("input",calc));
 calc();
 </script>
 </body>
